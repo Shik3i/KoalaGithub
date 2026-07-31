@@ -90,9 +90,11 @@
 					account, name, or email address.
 				</li>
 				<li>
-					<strong>Abuse protection:</strong> The application temporarily counts vote requests per combination
-					of IP address and device identifier in memory. These counters expire after one hour and are
-					not persisted by the application.
+					<strong>Abuse protection:</strong> The application temporarily counts vote and vote-deletion
+					requests per combination of IP address and device identifier in memory. These rate-limit counters
+					reset after one hour and are not persisted. Resetting a counter does not expire, remove, or
+					duplicate a vote: a vote remains associated with the same persistent browser identifier until
+					it is toggled off or deleted.
 				</li>
 			</ul>
 		</section>
@@ -107,9 +109,9 @@
 			</p>
 			<p>
 				Vote records remain until you remove the vote, use the deletion control below, the
-				visualizer is removed, or the service is discontinued. Transient in-memory abuse counters
-				expire after one hour. Hosting logs follow the infrastructure provider's operational
-				retention rules.
+				visualizer is removed, or the service is discontinued. Only the transient in-memory request
+				counters reset after one hour; this has no effect on stored votes. Hosting logs follow the
+				infrastructure provider's operational retention rules.
 			</p>
 		</section>
 
