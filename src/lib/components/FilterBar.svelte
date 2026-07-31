@@ -68,6 +68,7 @@
 			<select id="sort-select" bind:value={selectedSort} class="sort-select">
 				<option value="popularity">Popularity</option>
 				<option value="most-voted">Most Voted ▲</option>
+				<option value="most-stars">Most Stars ⭐</option>
 				<option value="alphabetical">Alphabetical (A-Z)</option>
 				<option value="recently-added">Recently Added</option>
 			</select>

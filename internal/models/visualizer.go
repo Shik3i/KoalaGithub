@@ -29,6 +29,9 @@ type Visualizer struct {
 	EstimatedHeight       int               `json:"estimatedHeight"`
 	VoteCount             int               `json:"voteCount"`
 	UserVoted             bool              `json:"userVoted"`
+	GitHubStars           int               `json:"githubStars"`
+	LastRefreshedAt       string            `json:"lastRefreshedAt,omitempty"`
+	NextRefreshAt         string            `json:"nextRefreshAt,omitempty"`
 }
 
 type VoteRequest struct {

@@ -58,6 +58,14 @@
 		reloadKey++;
 	}
 
+	function formatStars(count?: number): string {
+		if (!count || count === 0) return '';
+		if (count >= 1000) {
+			return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+		}
+		return count.toString();
+	}
+
 	function handleSelectTheme(themeKey: string) {
 		selectedTheme = themeKey;
 	}
@@ -122,6 +130,9 @@
 					/>
 				</svg>
 				<span>Repo</span>
+				{#if visualizer.githubStars && visualizer.githubStars > 0}
+					<span class="star-count">⭐ {formatStars(visualizer.githubStars)}</span>
+				{/if}
 			</a>
 			<a
 				href={visualizer.websiteUrl}
@@ -397,10 +408,20 @@
 		font-weight: 700;
 		color: var(--text-main);
 		background-color: var(--bg-subtle);
-		padding: 0.2rem 0.55rem;
-		border-radius: var(--radius-sm);
+		padding: 4px 8px;
+		border-radius: var(--radius-md);
 		border: 1px solid var(--border-color);
 		transition: all 0.15s ease;
+	}
+
+	.star-count {
+		font-size: 0.725rem;
+		font-weight: 600;
+		color: #eab308;
+		background-color: rgba(234, 179, 8, 0.12);
+		padding: 0.05rem 0.35rem;
+		border-radius: var(--radius-sm);
+		margin-left: 0.15rem;
 	}
 
 	.repo-link:hover {

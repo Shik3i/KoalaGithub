@@ -41,8 +41,11 @@ export interface Visualizer {
 	estimatedHeight?: number; // In pixels, to prevent CLS
 	voteCount: number;
 	userVoted: boolean;
+	githubStars?: number;
+	lastRefreshedAt?: string;
+	nextRefreshAt?: string;
 }
 
 export type AppTheme = 'light' | 'dark' | 'system';
 
-export type SortOption = 'popularity' | 'most-voted' | 'alphabetical' | 'recently-added';
+export type SortOption = 'popularity' | 'most-voted' | 'most-stars' | 'alphabetical' | 'recently-added';

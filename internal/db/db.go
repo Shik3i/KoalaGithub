@@ -85,7 +85,10 @@ func createTables() error {
 		added_at TEXT NOT NULL,
 		popularity_rank INTEGER NOT NULL,
 		enabled INTEGER NOT NULL,
-		estimated_height INTEGER NOT NULL
+		estimated_height INTEGER NOT NULL,
+		github_stars INTEGER DEFAULT 0,
+		last_refreshed_at TEXT,
+		next_refresh_at TEXT
 	);
 
 	CREATE TABLE IF NOT EXISTS votes (
@@ -97,7 +100,16 @@ func createTables() error {
 	);
 	`
 	_, err := DB.Exec(schema)
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Migrations for existing DBs
+	_, _ = DB.Exec("ALTER TABLE visualizers ADD COLUMN github_stars INTEGER DEFAULT 0;")
+	_, _ = DB.Exec("ALTER TABLE visualizers ADD COLUMN last_refreshed_at TEXT;")
+	_, _ = DB.Exec("ALTER TABLE visualizers ADD COLUMN next_refresh_at TEXT;")
+
+	return nil
 }
 
 func LoadCacheFromDB() error {
@@ -112,7 +124,8 @@ func LoadCacheFromDB() error {
 			v.themes_json, v.default_theme, v.requires_username, v.requires_external_setup,
 			COALESCE(v.setup_explanation, ''), COALESCE(v.privacy_notice, ''),
 			v.added_at, v.popularity_rank, v.enabled, v.estimated_height,
-			(SELECT COUNT(*) FROM votes vt WHERE vt.visualizer_id = v.id) AS vote_count
+			(SELECT COUNT(*) FROM votes vt WHERE vt.visualizer_id = v.id) AS vote_count,
+			COALESCE(v.github_stars, 0), COALESCE(v.last_refreshed_at, ''), COALESCE(v.next_refresh_at, '')
 		FROM visualizers v
 		WHERE v.enabled = 1
 		ORDER BY v.popularity_rank ASC
@@ -138,7 +151,7 @@ func LoadCacheFromDB() error {
 			&themesJSON, &item.DefaultTheme, &reqUser, &reqSetup,
 			&item.SetupExplanation, &item.PrivacyNotice,
 			&item.AddedAt, &item.PopularityRank, &enabled, &item.EstimatedHeight,
-			&item.VoteCount,
+			&item.VoteCount, &item.GitHubStars, &item.LastRefreshedAt, &item.NextRefreshAt,
 		)
 		if err != nil {
 			return err
@@ -306,4 +319,23 @@ func seedInitialData(seedJSON []byte) error {
 	}
 
 	return tx.Commit()
+}
+
+// UpdateVisualizerStars updates RAM cache and persists star count + refresh timestamps to SQLite
+func UpdateVisualizerStars(id string, stars int, lastRefreshed, nextRefresh string) error {
+	Cache.Lock()
+	if item, ok := Cache.byID[id]; ok {
+		item.GitHubStars = stars
+		item.LastRefreshedAt = lastRefreshed
+		item.NextRefreshAt = nextRefresh
+	}
+	Cache.Unlock()
+
+	_, err := DB.Exec(`
+		UPDATE visualizers 
+		SET github_stars = ?, last_refreshed_at = ?, next_refresh_at = ? 
+		WHERE id = ?`,
+		stars, lastRefreshed, nextRefresh, id,
+	)
+	return err
 }

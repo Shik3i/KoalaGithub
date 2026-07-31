@@ -12,6 +12,7 @@ import (
 
 	"github.com/Shik3i/KoalaGithub/internal/db"
 	"github.com/Shik3i/KoalaGithub/internal/handlers"
+	"github.com/Shik3i/KoalaGithub/internal/services"
 )
 
 //go:embed all:www
@@ -34,6 +35,9 @@ func main() {
 	if err := db.InitDB(dbPath, seedJSON); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
+
+	// Start background staggered daily GitHub stars refresher
+	services.StartStaggeredStarsRefresher()
 
 	mux := http.NewServeMux()
 

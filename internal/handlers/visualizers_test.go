@@ -18,6 +18,7 @@ var testSeedJSON []byte
 
 func TestVisualizersAPIAndVoting(t *testing.T) {
 	testDB := "./data/test_koalagithub.db"
+	_ = os.Remove(testDB)
 	defer os.Remove(testDB)
 
 	if err := db.InitDB(testDB, testSeedJSON); err != nil {

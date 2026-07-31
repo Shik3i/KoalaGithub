@@ -87,6 +87,8 @@
 			.sort((a, b) => {
 				if (selectedSort === 'most-voted') {
 					return b.voteCount - a.voteCount;
+				} else if (selectedSort === 'most-stars') {
+					return (b.githubStars || 0) - (a.githubStars || 0);
 				} else if (selectedSort === 'alphabetical') {
 					return a.name.localeCompare(b.name);
 				} else if (selectedSort === 'recently-added') {
