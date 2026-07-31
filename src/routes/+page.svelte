@@ -201,8 +201,8 @@
 		/>
 		<h1 class="hero-title">Compare GitHub Profile Visualizers in One Place</h1>
 		<p class="hero-subtitle">
-			Enter any GitHub username below to instantly preview, customize themes, upvote favorites, and
-			copy ready-to-use README Markdown code.
+			Enter a GitHub username to compare compatible previews, customize themes, upvote favorites,
+			and copy README Markdown or the required workflow.
 		</p>
 
 		<UserSearch bind:username={activeUsername} onUpdate={handleUsernameUpdate} />
@@ -235,13 +235,11 @@
 				<div class="banner-text">
 					<h2>Repository-generated visualizers</h2>
 					<p>
-						These visualizers require an automated <strong>GitHub Actions workflow</strong> in your
-						profile repository. Depending on the project, the generated image is committed to the
-						<code>output</code>
-						branch or the default branch. A preview appears only after that file exists for
-						<strong>{activeUsername}</strong>. Read the
-						<a href="/guide" class="banner-guide-link">Complete setup guide</a> or copy the workflow shown
-						on each card.
+						These cards do not generate assets dynamically from the username field. Install and run
+						the provided <strong>GitHub Actions workflow</strong> in your own profile repository
+						first; it writes the SVG used by your README. Copy the workflow from a card or follow
+						the
+						<a href="/guide#generated-visualizers" class="banner-guide-link">setup guide</a>.
 					</p>
 				</div>
 			</div>

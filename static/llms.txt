@@ -4,8 +4,8 @@ KoalaGitHub is an open-source directory for previewing and comparing GitHub prof
 
 ## User features
 
-- Preview supported third-party visualizers for a supplied GitHub username.
-- Copy README Markdown and reviewed GitHub Actions workflow examples.
+- Preview supported URL-based visualizers for a supplied GitHub username.
+- Copy README Markdown for instant visualizers or a reviewed GitHub Actions workflow for generated assets.
 - Sort by KoalaGitHub votes, source-repository stars, name, or date added.
 - No accounts, analytics, advertising trackers, or tracking cookies.
 - Pseudonymous device-based votes can be deleted from the Privacy page.
@@ -30,4 +30,4 @@ KoalaGitHub is an open-source directory for previewing and comparing GitHub prof
 - `POST /api/visualizers/{id}/vote`: toggle a vote with JSON body `{"deviceId":"<UUID v4>"}`.
 - `DELETE /api/votes`: delete all votes for the UUID v4 supplied in `X-Device-ID`.
 
-Third-party preview requests are made directly by the visitor's browser. See `/privacy` for data-processing details and `/guide` for profile README and workflow setup.
+Repository-generated assets do not update dynamically from KoalaGitHub's username field; users must run the provided workflow in their own profile repository. Third-party preview requests are made directly by the visitor's browser. See `/privacy` for data-processing details and `/guide` for profile README and workflow setup.

@@ -22,7 +22,7 @@
 			dashboard.
 		</p>
 
-		<h2>Core Principles</h2>
+		<h2>Core principles</h2>
 		<ul class="features-list">
 			<li>
 				⚡ <strong>Fast UI</strong>: SvelteKit prerenders the interface; a small Go API provides
@@ -37,12 +37,12 @@
 				<code>?user=yourusername</code>.
 			</li>
 			<li>
-				🛠️ <strong>One-click Markdown copy</strong>: Pick a theme and copy a ready-to-use snippet
-				into your <code>README.md</code>.
+				🛠️ <strong>Guided setup</strong>: Copy Markdown for instant visualizers or the required
+				workflow for repository-generated assets.
 			</li>
 		</ul>
 
-		<h2>How to Contribute a New Visualizer</h2>
+		<h2>How to contribute a new visualizer</h2>
 		<p>
 			Visualizer metadata is maintained in the central JSON registry <code
 				>src/lib/data/visualizers.json</code
@@ -58,7 +58,7 @@
 			</li>
 			<li>Add your visualizer definition to <code>src/lib/data/visualizers.json</code>.</li>
 			<li>Run <code>npm run test</code> to run data integrity checks.</li>
-			<li>Submit a Pull Request!</li>
+			<li>Submit a pull request.</li>
 		</ol>
 
 		<h2>How sorting works</h2>
@@ -73,7 +73,7 @@
 		<p>Votes and repository stars are never combined into a weighted score.</p>
 
 		<div class="eco-note">
-			<h3>Part of the KoalaStuff Ecosystem</h3>
+			<h3>Part of the KoalaStuff ecosystem</h3>
 			<p>
 				KoalaGitHub is part of the open-source KoalaStuff project suite. For legal and domain
 				notices, please visit <a

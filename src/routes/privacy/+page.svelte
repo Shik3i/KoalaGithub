@@ -85,6 +85,11 @@
 					Infrastructure security or access logs may be retained separately.
 				</li>
 				<li>
+					<strong>GitHub usernames:</strong> A username entered in the search field is placed in the page
+					URL and compatible preview URLs. It is not written to the SQLite database. Infrastructure providers
+					and the selected preview provider may receive it as part of the requested URL.
+				</li>
+				<li>
 					<strong>Votes:</strong> A random UUID v4 device identifier and the selected visualizer ID are
 					transmitted to the API and stored in SQLite. They are not intentionally connected to a GitHub
 					account, name, or email address.
@@ -119,7 +124,11 @@
 			<h2>4. Browser storage</h2>
 			<ul>
 				<li><code>koala-theme</code> stores the selected light, dark, or system theme.</li>
-				<li><code>koala_device_id</code> stores the pseudonymous vote identifier.</li>
+				<li>
+					<code>koala_device_id</code> stores the pseudonymous identifier used to load and toggle your
+					vote state. It has no automatic expiry and remains unchanged until you delete it or clear this
+					site's browser data.
+				</li>
 			</ul>
 			<p>
 				Clearing site data removes these browser entries. It does not by itself delete an existing
@@ -171,6 +180,7 @@
 				protection authority. Because votes are pseudonymous, include the device identifier when a
 				request concerns a vote record; otherwise the record cannot be reliably attributed to you.
 			</p>
+			<p>KoalaGitHub does not use automated decision-making or profiling.</p>
 		</section>
 	</div>
 </div>

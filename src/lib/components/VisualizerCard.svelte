@@ -313,8 +313,9 @@
 	<div class="code-section">
 		{#if visualizer.actionWorkflowYaml}
 			<div class="workflow-prerequisite">
-				Generate this asset in your own profile repository first.
-				<a href="/guide#generated-visualizers">Read the workflow setup guide →</a>
+				This asset does not update dynamically from the username field; generate it in your own
+				profile repository with a GitHub Actions workflow by following the
+				<a href="/guide#generated-visualizers">setup guide →</a>.
 			</div>
 			<div class="code-header">
 				<span class="code-label">GitHub Actions workflow:</span>

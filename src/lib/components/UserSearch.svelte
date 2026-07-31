@@ -86,7 +86,7 @@
 		</div>
 
 		<button type="submit" class="submit-btn">
-			<span>Update Profile Cards</span>
+			<span>Update previews</span>
 			<svg
 				width="16"
 				height="16"

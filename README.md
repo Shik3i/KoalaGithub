@@ -6,8 +6,8 @@ Live URL after deployment: [github.koalastuff.net](https://github.koalastuff.net
 
 ## Features
 
-- Compare compatible visualizers for any GitHub username.
-- Switch themes and copy ready-to-use README Markdown.
+- Compare compatible URL-based visualizers for any GitHub username.
+- Switch themes and copy README Markdown or the required generator workflow.
 - Keep configured generators separate from instant third-party previews.
 - Use pseudonymous per-device votes without an account.
 - Serve the prerendered SvelteKit UI and Go API from one container.
@@ -87,7 +87,7 @@ The central registry is `src/lib/data/visualizers.json`.
 
 ## Privacy
 
-KoalaGitHub contains no analytics, advertising trackers, or tracking cookies. It stores pseudonymous device IDs and visualizer IDs for voting. Preview images are loaded directly from third-party providers, which receive normal HTTP request data. The application includes a self-service vote deletion control.
+KoalaGitHub contains no analytics, advertising trackers, or tracking cookies. It stores a persistent pseudonymous device ID and visualizer IDs for voting; the rate-limit window does not expire stored votes. Preview images are loaded directly from third-party providers, which receive normal HTTP request data. The application includes a self-service vote deletion control.
 
 See the in-app Privacy Policy and [KoalaStuff legal notice](https://koalastuff.net/legal).
 
