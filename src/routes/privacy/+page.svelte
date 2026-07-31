@@ -5,50 +5,62 @@
 <div class="container page-container">
 	<header class="page-header">
 		<h1>Privacy Policy</h1>
-		<p class="lead">Transparent information about data handling on KoalaGitHub (`github.koalastuff.net`).</p>
+		<p class="lead">Transparent information about data handling, anonymous upvoting, and privacy on KoalaGitHub (<code>github.koalastuff.net</code>).</p>
 	</header>
 
 	<div class="content-card">
-		<h2>1. Application Data Processing</h2>
+		<h2>1. Overview & Backend Architecture</h2>
 		<p>
-			KoalaGitHub is designed as a <strong>100% static, client-side web application</strong>.
+			KoalaGitHub is an open-source web application designed with a strict <strong>privacy-first approach</strong>. It consists of a static SvelteKit frontend served by an embedded Go backend server.
 		</p>
 		<ul>
-			<li><strong>No Analytics</strong>: We do not use Google Analytics, Plausible, Telemetry, or any tracking services.</li>
-			<li><strong>No Cookies or Ad Networks</strong>: We do not set any tracking cookies or execute advertising scripts.</li>
-			<li><strong>No Account System or Database</strong>: We do not collect, store, or process user accounts or personal profiles on any server.</li>
+			<li><strong>No User Accounts or Registration</strong>: You do not need to register, log in, or provide any personal information (such as name or email) to use KoalaGitHub.</li>
+			<li><strong>No Tracking Cookies or Ad Networks</strong>: We do not set any tracking cookies, execute advertising scripts, or use third-party analytics (no Google Analytics, no Plausible, no Telemetry).</li>
+			<li><strong>No IP Logging for Votes</strong>: IP addresses are not stored or associated with user actions.</li>
 		</ul>
 
-		<h2>2. Local Storage</h2>
+		<h2>2. Anonymous Device-Based Upvoting System</h2>
 		<p>
-			We use your browser's <code>localStorage</code> solely to save your active theme preference (e.g. Light, Dark, or System theme). This setting remains strictly inside your web browser and is never transmitted to us or any third party.
+			To allow visitors to upvote their favorite visualizers without requiring an account or login, KoalaGitHub uses a pseudonymous **Device ID**:
+		</p>
+		<ul>
+			<li><strong>Device Identifier (UUID v4)</strong>: When you visit KoalaGitHub, a random UUID v4 string (e.g. <code>koala_device_id</code>) is generated locally in your browser and saved in <code>localStorage</code>.</li>
+			<li><strong>Vote Registration</strong>: When you click an upvote button, your pseudonymous <code>device_id</code> and the target <code>visualizer_id</code> are transmitted to <code>POST /api/visualizers/&#123;id&#125;/vote</code> and stored in our local SQLite database.</li>
+			<li><strong>Purpose</strong>: This identifier is used exclusively to keep track of which visualizers you have upvoted on your current device so you can toggle your votes on or off. It is completely pseudonymous and is never linked to your identity, IP address, or GitHub account.</li>
+		</ul>
+
+		<h2>3. Local Storage Usage</h2>
+		<p>
+			We use your browser's <code>localStorage</code> for two specific functional purposes only:
+		</p>
+		<ol>
+			<li><code>koala-theme</code>: Stores your selected interface theme (Light, Dark, or System mode).</li>
+			<li><code>koala_device_id</code>: Stores your pseudonymous UUID v4 device identifier for visualizer upvoting.</li>
+		</ol>
+		<p>
+			Both entries remain inside your browser and can be cleared at any time by clearing your browser site data or local storage.
 		</p>
 
-		<h2>3. Third-Party Visualizer Requests & Network Traffic</h2>
+		<h2>4. Third-Party Visualizer Requests & Image Previews</h2>
 		<p>
-			<strong>Important Transparency Notice:</strong> When you view or interact with live visualizers, preview images, stats cards, trophies, or graphs on KoalaGitHub, your web browser makes direct HTTP/HTTPS requests to third-party providers (such as Vercel, Heroku, GitHub, komarev.com, shields.io, etc.).
+			<strong>Important Transparency Notice:</strong> When you view live visualizer preview images, stats cards, graphs, or bonsai trees on KoalaGitHub, your browser makes direct HTTPS requests to third-party hosting services (such as Vercel, GitHub raw content, demolab, etc.).
 		</p>
 		<p>
-			During these requests, third-party hosting services and visualizer maintainers receive standard web traffic data directly from your browser, which may include:
+			During these HTTP requests, third-party hosting services and visualizer maintainers receive standard web traffic data directly from your browser, which may include:
 		</p>
 		<ul>
 			<li>Your IP address</li>
 			<li>Your browser User-Agent header</li>
 			<li>The requested GitHub username parameter</li>
-			<li>Timestamp and standard HTTP request headers</li>
+			<li>Standard HTTP request timestamp</li>
 		</ul>
 		<p>
-			To help protect your privacy, KoalaGitHub applies a restrictive <code>referrerpolicy="no-referrer"</code> attribute to preview images and external links where practical.
+			To protect your privacy, KoalaGitHub applies a restrictive <code>referrerpolicy="no-referrer"</code> attribute to all preview images and external links where practical.
 		</p>
 
-		<h2>4. Visitor Counters</h2>
+		<h2>5. Fonts & Asset Hosting</h2>
 		<p>
-			Certain visualizers (such as visitor profile view counters) increment an external counter database when their preview image URL is fetched. To prevent unwanted counting, KoalaGitHub requires explicit user action before loading live preview images for counter badges.
-		</p>
-
-		<h2>5. Fonts & Assets</h2>
-		<p>
-			KoalaGitHub does not load font files or stylesheets from external CDNs (such as Google Fonts). All typography relies on native system fonts.
+			KoalaGitHub does not load font files, scripts, or stylesheets from external CDNs (such as Google Fonts). All typography relies on native system font stacks.
 		</p>
 
 		<h2>6. Legal Notices</h2>
@@ -101,12 +113,12 @@
 		margin-top: 0.5rem;
 	}
 
-	p, ul {
+	p, ul, ol {
 		color: var(--text-main);
 		line-height: 1.6;
 	}
 
-	ul {
+	ul, ol {
 		padding-left: 1.25rem;
 		display: flex;
 		flex-direction: column;
