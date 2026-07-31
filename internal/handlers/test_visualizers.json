@@ -1,0 +1,23 @@
+[
+  {
+    "id": "test-visualizer-1",
+    "name": "Test Visualizer",
+    "description": "Test visualizer description.",
+    "category": "stats",
+    "tags": ["test"],
+    "previewType": "image",
+    "imageFormat": "svg",
+    "imageUrlTemplate": "https://example.com/api?user={username}",
+    "markdownTemplate": "![Test](https://example.com/api?user={username})",
+    "websiteUrl": "https://example.com",
+    "repositoryUrl": "https://github.com/example/test",
+    "themes": [{ "key": "default", "label": "Default" }],
+    "defaultTheme": "default",
+    "requiresUsername": true,
+    "requiresExternalSetup": false,
+    "addedAt": "2026-07-31",
+    "popularityRank": 1,
+    "enabled": true,
+    "estimatedHeight": 180
+  }
+]

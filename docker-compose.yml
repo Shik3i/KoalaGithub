@@ -1,0 +1,17 @@
+services:
+  koala-github:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: koala-github
+    ports:
+      - "8088:8080"
+    volumes:
+      - koala_data:/data
+    environment:
+      - PORT=8080
+      - DB_PATH=/data/koalagithub.db
+    restart: unless-stopped
+
+volumes:
+  koala_data:

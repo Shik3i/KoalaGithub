@@ -1,0 +1,5 @@
+# robots.txt for KoalaGitHub (github.koalastuff.net)
+User-agent: *
+Allow: /
+
+Sitemap: https://github.koalastuff.net/sitemap.xml

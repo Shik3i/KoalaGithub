@@ -1,0 +1,32 @@
+# Build & Output
+www/*
+!www/.gitkeep
+build/
+.svelte-kit/
+dist/
+
+# Local SQLite Database & Data
+data/
+*.db
+*.db-journal
+*.db-wal
+
+# Go Compiled Binaries
+koala-github
+koala-github.exe
+
+# Dependencies
+node_modules/
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs & Env
+*.log
+.env
+.env.*
+!.env.example
+scratch/

@@ -1,0 +1,13 @@
+# Docker build ignore
+.git
+.gitignore
+node_modules
+.svelte-kit
+www
+data
+*.db
+*.exe
+*.log
+README.md
+walkthrough.md
+implementation_plan.md
