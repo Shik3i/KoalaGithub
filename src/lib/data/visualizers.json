@@ -742,27 +742,6 @@
     "estimatedHeight": 420
   },
   {
-    "id": "git-style",
-    "name": "Git Style",
-    "description": "Turns GitHub contributions into illustrated flower and hair visuals; the catalog preview uses the repository's stable example asset.",
-    "category": "activity",
-    "tags": ["contributions", "flower", "illustration", "animation", "png"],
-    "previewType": "image",
-    "imageFormat": "png",
-    "imageUrlTemplate": "https://raw.githubusercontent.com/anonymousRecords/git-style/main/docs/doc.png",
-    "markdownTemplate": "![Git Style](https://raw.githubusercontent.com/anonymousRecords/git-style/main/docs/doc.png)",
-    "websiteUrl": "https://git-style.vercel.app",
-    "repositoryUrl": "https://github.com/anonymousRecords/git-style",
-    "themes": [],
-    "defaultTheme": "",
-    "requiresUsername": false,
-    "requiresExternalSetup": false,
-    "privacyNotice": "The public hosted API returned an error during verification, so this entry uses the repository's stable static preview instead of a broken live endpoint.",
-    "addedAt": "2026-07-31",
-    "enabled": true,
-    "estimatedHeight": 300
-  },
-  {
     "id": "github-profile-svg",
     "name": "GitHub Profile SVG",
     "description": "Generates a self-contained SVG profile statistics card from public GitHub REST data.",
