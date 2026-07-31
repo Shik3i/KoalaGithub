@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import Gear from 'phosphor-svelte/lib/Gear';
 	import UserSearch from '$lib/components/UserSearch.svelte';
 	import FilterBar from '$lib/components/FilterBar.svelte';
 	import VisualizerGrid from '$lib/components/VisualizerGrid.svelte';
@@ -231,7 +232,7 @@
 
 		{#if selectedCategory === 'configured' || workflowFilter === 'workflow'}
 			<div class="category-info-banner">
-				<span class="banner-icon">⚙️</span>
+				<span class="banner-icon"><Gear size={24} weight="duotone" aria-hidden="true" /></span>
 				<div class="banner-text">
 					<h2>Repository-generated visualizers</h2>
 					<p>

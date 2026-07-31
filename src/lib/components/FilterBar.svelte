@@ -1,4 +1,14 @@
 <script lang="ts">
+	import type { Component } from 'svelte';
+	import Sparkle from 'phosphor-svelte/lib/Sparkle';
+	import ChartBar from 'phosphor-svelte/lib/ChartBar';
+	import Fire from 'phosphor-svelte/lib/Fire';
+	import ChartLine from 'phosphor-svelte/lib/ChartLine';
+	import Gear from 'phosphor-svelte/lib/Gear';
+	import MagnifyingGlass from 'phosphor-svelte/lib/MagnifyingGlass';
+	import X from 'phosphor-svelte/lib/X';
+	import ArrowUp from 'phosphor-svelte/lib/ArrowUp';
+	import ArrowDown from 'phosphor-svelte/lib/ArrowDown';
 	import type {
 		VisualizerCategory,
 		SortDirection,
@@ -26,12 +36,12 @@
 		availableTags?: string[];
 	}>();
 
-	const CATEGORIES: { key: VisualizerCategory | 'all'; label: string; icon: string }[] = [
-		{ key: 'all', label: 'All', icon: '✨' },
-		{ key: 'stats', label: 'Stats Cards', icon: '📊' },
-		{ key: 'streak', label: 'Streak', icon: '🔥' },
-		{ key: 'activity', label: 'Activity Graph', icon: '📈' },
-		{ key: 'configured', label: 'Setup required', icon: '⚙️' }
+	const CATEGORIES: { key: VisualizerCategory | 'all'; label: string; icon: Component }[] = [
+		{ key: 'all', label: 'All', icon: Sparkle },
+		{ key: 'stats', label: 'Stats Cards', icon: ChartBar },
+		{ key: 'streak', label: 'Streak', icon: Fire },
+		{ key: 'activity', label: 'Activity Graph', icon: ChartLine },
+		{ key: 'configured', label: 'Setup required', icon: Gear }
 	];
 
 	const SORT_DESCRIPTIONS: Record<SortOption, [string, string]> = {
@@ -52,6 +62,7 @@
 	<!-- Category Chips (Single Row, No Wrap) -->
 	<div class="category-chips" role="group" aria-label="Visualizer categories">
 		{#each CATEGORIES as cat (cat.key)}
+			{@const CategoryIcon = cat.icon}
 			<button
 				type="button"
 				aria-pressed={selectedCategory === cat.key}
@@ -59,7 +70,7 @@
 				class:active={selectedCategory === cat.key}
 				onclick={() => (selectedCategory = cat.key)}
 			>
-				<span class="icon">{cat.icon}</span>
+				<span class="icon"><CategoryIcon size={16} weight="regular" aria-hidden="true" /></span>
 				<span>{cat.label}</span>
 			</button>
 		{/each}
@@ -68,18 +79,7 @@
 	<!-- Controls Row: Search Query & Sort -->
 	<div class="controls-row">
 		<div class="search-input-wrapper">
-			<svg
-				class="search-icon"
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-			>
-				<circle cx="11" cy="11" r="8" />
-				<line x1="21" y1="21" x2="16.65" y2="16.65" />
-			</svg>
+			<MagnifyingGlass class="search-icon" size={16} weight="regular" aria-hidden="true" />
 			<input
 				type="search"
 				bind:value={searchQuery}
@@ -94,7 +94,8 @@
 					type="button"
 					class="clear-search"
 					onclick={() => (searchQuery = '')}
-					aria-label="Clear visualizer search">✕</button
+					aria-label="Clear visualizer search"
+					><X size={16} weight="regular" aria-hidden="true" /></button
 				>
 			{/if}
 		</div>
@@ -114,25 +115,11 @@
 				aria-label={`Sort ${sortDirection === 'ascending' ? 'ascending' : 'descending'}`}
 				title={`Sort ${sortDirection === 'ascending' ? 'ascending' : 'descending'}; click to reverse`}
 			>
-				<svg
-					width="18"
-					height="18"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					{#if sortDirection === 'ascending'}
-						<path d="M12 19V5" />
-						<path d="m6 11 6-6 6 6" />
-					{:else}
-						<path d="M12 5v14" />
-						<path d="m18 13-6 6-6-6" />
-					{/if}
-				</svg>
+				{#if sortDirection === 'ascending'}
+					<ArrowUp size={18} weight="bold" aria-hidden="true" />
+				{:else}
+					<ArrowDown size={18} weight="bold" aria-hidden="true" />
+				{/if}
 			</button>
 		</div>
 	</div>
@@ -253,7 +240,7 @@
 		border-radius: var(--radius-md);
 	}
 
-	.search-icon {
+	:global(.search-icon) {
 		position: absolute;
 		left: 0.75rem;
 		color: var(--text-subtle);

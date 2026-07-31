@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MagnifyingGlass from 'phosphor-svelte/lib/MagnifyingGlass';
 	import VisualizerCard from './VisualizerCard.svelte';
 	import type { Visualizer } from '$lib/types/visualizer.types';
 
@@ -11,7 +12,8 @@
 <div class="grid-container">
 	{#if visualizers.length === 0}
 		<div class="empty-state">
-			<span class="empty-icon">🔍</span>
+			<span class="empty-icon"><MagnifyingGlass size={34} weight="light" aria-hidden="true" /></span
+			>
 			<h3>No visualizers found</h3>
 			<p>Try adjusting your search, category, tag, or workflow filter.</p>
 		</div>

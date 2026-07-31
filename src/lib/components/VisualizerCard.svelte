@@ -1,4 +1,14 @@
 <script lang="ts">
+	import ArrowClockwise from 'phosphor-svelte/lib/ArrowClockwise';
+	import ArrowUp from 'phosphor-svelte/lib/ArrowUp';
+	import ArrowUpRight from 'phosphor-svelte/lib/ArrowUpRight';
+	import Check from 'phosphor-svelte/lib/Check';
+	import Copy from 'phosphor-svelte/lib/Copy';
+	import Eye from 'phosphor-svelte/lib/Eye';
+	import Gear from 'phosphor-svelte/lib/Gear';
+	import GithubLogo from 'phosphor-svelte/lib/GithubLogo';
+	import Star from 'phosphor-svelte/lib/Star';
+	import WarningCircle from 'phosphor-svelte/lib/WarningCircle';
 	import type { Visualizer } from '$lib/types/visualizer.types';
 	import { renderTemplate } from '$lib/utils/markdown';
 	import { getOrCreateDeviceId } from '$lib/utils/device';
@@ -161,9 +171,7 @@
 					aria-label={`${visualizer.userVoted ? 'Remove vote from' : 'Vote for'} ${visualizer.name}; ${visualizer.voteCount} votes`}
 					aria-pressed={visualizer.userVoted}
 				>
-					<svg class="upvote-arrow" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-						<path d="M12 4L3 15h6v5h6v-5h6L12 4z" />
-					</svg>
+					<ArrowUp class="upvote-arrow" size={14} weight="bold" aria-hidden="true" />
 					<span class="vote-count">{visualizer.voteCount}</span>
 				</button>
 			</div>
@@ -176,14 +184,13 @@
 				class="repo-link"
 				title="View Open-Source GitHub Repository"
 			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-					<path
-						d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.3c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"
-					/>
-				</svg>
+				<GithubLogo size={15} weight="fill" aria-hidden="true" />
 				<span>Repo</span>
 				{#if visualizer.githubStars && visualizer.githubStars > 0}
-					<span class="star-count">⭐ {formatStars(visualizer.githubStars)}</span>
+					<span class="star-count"
+						><Star size={12} weight="fill" aria-hidden="true" />
+						{formatStars(visualizer.githubStars)}</span
+					>
 				{/if}
 			</a>
 		</div>
@@ -226,7 +233,7 @@
 			<!-- Configured Setup Card -->
 			<div class="setup-notice">
 				<div class="setup-header">
-					<span class="setup-icon">⚙️</span>
+					<span class="setup-icon"><Gear size={24} weight="duotone" aria-hidden="true" /></span>
 					<h3>External Setup Required</h3>
 				</div>
 				<p class="setup-text">{visualizer.setupExplanation}</p>
@@ -240,7 +247,7 @@
 		{:else if visualizer.previewType === 'opt-in-counter' && !optInLoaded}
 			<!-- Opt-in Visitor Counter Placeholder -->
 			<div class="opt-in-box">
-				<span class="counter-icon">👁️</span>
+				<span class="counter-icon"><Eye size={28} weight="duotone" aria-hidden="true" /></span>
 				<p class="counter-notice">{visualizer.privacyNotice}</p>
 				<button type="button" class="opt-in-btn" onclick={() => (optInLoaded = true)}>
 					Load Live Counter Preview ({username})
@@ -257,7 +264,9 @@
 
 			{#if imageState === 'error'}
 				<div class="error-box" style="min-height: {visualizer.estimatedHeight || 170}px;">
-					<span class="error-icon">⚙️</span>
+					<span class="error-icon"
+						><WarningCircle size={28} weight="duotone" aria-hidden="true" /></span
+					>
 					{#if visualizer.requiresExternalSetup}
 						<p class="error-text">
 							{#if isReferenceProfile}
@@ -277,16 +286,21 @@
 								target="_blank"
 								rel="noopener noreferrer"
 								class="retry-btn"
-								>{isReferenceProfile ? 'View Build Status ↗' : 'View Setup Guide ↗'}</a
+								>{isReferenceProfile ? 'View Build Status' : 'View Setup Guide'}
+								<ArrowUpRight size={14} weight="bold" aria-hidden="true" /></a
 							>
-							<button type="button" class="open-direct-btn" onclick={handleRetry}>Retry</button>
+							<button type="button" class="open-direct-btn" onclick={handleRetry}
+								><ArrowClockwise size={14} weight="bold" aria-hidden="true" /> Retry</button
+							>
 						</div>
 					{:else}
 						<p class="error-text">Failed to load preview image from third-party provider.</p>
 						<div class="error-actions">
-							<button type="button" class="retry-btn" onclick={handleRetry}>Retry</button>
+							<button type="button" class="retry-btn" onclick={handleRetry}
+								><ArrowClockwise size={14} weight="bold" aria-hidden="true" /> Retry</button
+							>
 							<a href={imageUrl} target="_blank" rel="noopener noreferrer" class="open-direct-btn"
-								>Open Image Direct ↗</a
+								>Open Image Direct <ArrowUpRight size={14} weight="bold" aria-hidden="true" /></a
 							>
 						</div>
 					{/if}
@@ -322,8 +336,10 @@
 				<div class="code-actions">
 					<button type="button" class="copy-btn copy-yaml-btn" onclick={handleCopyYaml}>
 						{#if copiedYaml}
+							<Check size={14} weight="bold" aria-hidden="true" />
 							<span class="copied-indicator">Workflow copied</span>
 						{:else}
+							<Copy size={14} weight="regular" aria-hidden="true" />
 							<span>Copy workflow (.yml)</span>
 						{/if}
 					</button>
@@ -341,20 +357,10 @@
 				<div class="code-actions">
 					<button type="button" class="copy-btn" onclick={handleCopy}>
 						{#if copied}
+							<Check size={14} weight="bold" aria-hidden="true" />
 							<span class="copied-indicator">Markdown copied</span>
 						{:else}
-							<svg
-								width="14"
-								height="14"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								aria-hidden="true"
-							>
-								<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-								<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-							</svg>
+							<Copy size={14} weight="regular" aria-hidden="true" />
 							<span>Copy Markdown</span>
 						{/if}
 					</button>
@@ -452,7 +458,7 @@
 		min-height: 2rem;
 	}
 
-	.vote-btn .upvote-arrow {
+	:global(.vote-btn .upvote-arrow) {
 		transition:
 			transform 0.15s ease,
 			color 0.15s ease;
@@ -464,7 +470,7 @@
 		background-color: color-mix(in srgb, var(--brand-primary) 9%, transparent);
 	}
 
-	.vote-btn:hover .upvote-arrow {
+	:global(.vote-btn:hover .upvote-arrow) {
 		transform: translateY(-2px);
 	}
 
@@ -475,7 +481,7 @@
 		box-shadow: 0 2px 8px color-mix(in srgb, var(--brand-primary) 35%, transparent);
 	}
 
-	.vote-btn.voted .upvote-arrow {
+	:global(.vote-btn.voted .upvote-arrow) {
 		color: #ffffff;
 		transform: translateY(-1px);
 	}

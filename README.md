@@ -85,6 +85,10 @@ The central registry is `src/lib/data/visualizers.json`.
 3. Run the complete verification commands above.
 4. Submit a pull request.
 
+Visualizers that require private third-party account credentials or mandatory external secrets
+(for example WakaTime API credentials) are not listed. The directory only includes previews and
+workflows that can be used without handing KoalaGitHub private service credentials.
+
 ## Privacy
 
 KoalaGitHub contains no analytics, advertising trackers, or tracking cookies. It stores a persistent pseudonymous device ID and visualizer IDs for voting; the rate-limit window does not expire stored votes. Preview images are loaded directly from third-party providers, which receive normal HTTP request data. The application includes a self-service vote deletion control.

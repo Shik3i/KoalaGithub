@@ -1,4 +1,7 @@
 <script lang="ts">
+	import User from 'phosphor-svelte/lib/User';
+	import X from 'phosphor-svelte/lib/X';
+	import ArrowRight from 'phosphor-svelte/lib/ArrowRight';
 	import { DEFAULT_USERNAME, isValidGitHubUsername, sanitizeUsername } from '$lib/utils/username';
 
 	let { username = $bindable(DEFAULT_USERNAME), onUpdate = () => {} } = $props<{
@@ -44,17 +47,7 @@
 	<form class="search-box" onsubmit={handleSubmit}>
 		<div class="input-wrapper">
 			<span class="github-icon">
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-				>
-					<circle cx="12" cy="8" r="4" />
-					<path d="M4 21a8 8 0 0 1 16 0" />
-				</svg>
+				<User size={20} weight="regular" aria-hidden="true" />
 			</span>
 
 			<input
@@ -80,23 +73,14 @@
 					title="Reset to default (Shik3i)"
 					aria-label="Reset username to Shik3i"
 				>
-					✕
+					<X size={16} weight="regular" aria-hidden="true" />
 				</button>
 			{/if}
 		</div>
 
 		<button type="submit" class="submit-btn">
 			<span>Update previews</span>
-			<svg
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2.5"
-			>
-				<path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
-			</svg>
+			<ArrowRight size={16} weight="bold" aria-hidden="true" />
 		</button>
 	</form>
 

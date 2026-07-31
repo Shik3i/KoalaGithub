@@ -1,3 +1,10 @@
+<script lang="ts">
+	import Lightning from 'phosphor-svelte/lib/Lightning';
+	import Lock from 'phosphor-svelte/lib/Lock';
+	import Link from 'phosphor-svelte/lib/Link';
+	import Wrench from 'phosphor-svelte/lib/Wrench';
+</script>
+
 <svelte:head>
 	<title>About KoalaGitHub – Central GitHub Profile Visualizer Hub</title>
 	<link rel="canonical" href="https://github.koalastuff.net/about" />
@@ -25,20 +32,22 @@
 		<h2>Core principles</h2>
 		<ul class="features-list">
 			<li>
-				⚡ <strong>Fast UI</strong>: SvelteKit prerenders the interface; a small Go API provides
-				live stars and pseudonymous votes.
+				<Lightning size={18} weight="duotone" aria-hidden="true" /> <strong>Fast UI</strong>:
+				SvelteKit prerenders the interface; a small Go API provides live stars and pseudonymous
+				votes.
 			</li>
 			<li>
-				🔒 <strong>Privacy Focused</strong>: No analytics, ad trackers, accounts, or tracking
-				cookies.
+				<Lock size={18} weight="duotone" aria-hidden="true" /> <strong>Privacy Focused</strong>: No
+				analytics, ad trackers, accounts, or tracking cookies.
 			</li>
 			<li>
-				🔗 <strong>Shareable Custom URLs</strong>: Share your customized view using
+				<Link size={18} weight="duotone" aria-hidden="true" />
+				<strong>Shareable Custom URLs</strong>: Share your customized view using
 				<code>?user=yourusername</code>.
 			</li>
 			<li>
-				🛠️ <strong>Guided setup</strong>: Copy Markdown for instant visualizers or the required
-				workflow for repository-generated assets.
+				<Wrench size={18} weight="duotone" aria-hidden="true" /> <strong>Guided setup</strong>: Copy
+				Markdown for instant visualizers or the required workflow for repository-generated assets.
 			</li>
 		</ul>
 

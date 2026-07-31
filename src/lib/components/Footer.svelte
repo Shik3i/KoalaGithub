@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Lock from 'phosphor-svelte/lib/Lock';
 	import KoalaLogo from './KoalaLogo.svelte';
 </script>
 
@@ -25,7 +26,9 @@
 	</div>
 
 	<div class="container footer-bottom">
-		<p class="privacy-badge">🔒 No analytics • No ad tracking • Open source</p>
+		<p class="privacy-badge">
+			<Lock size={14} weight="duotone" aria-hidden="true" /> No analytics • No ad tracking • Open source
+		</p>
 		<p class="copyright">
 			<span class="version">Version {__APP_VERSION__}</span>
 			<span>© {new Date().getFullYear()} KoalaStuff Ecosystem</span>

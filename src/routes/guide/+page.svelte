@@ -1,4 +1,8 @@
 <script lang="ts">
+	import ArrowUpRight from 'phosphor-svelte/lib/ArrowUpRight';
+	import FolderOpen from 'phosphor-svelte/lib/FolderOpen';
+	import Lightbulb from 'phosphor-svelte/lib/Lightbulb';
+	import LockKey from 'phosphor-svelte/lib/LockKey';
 	import KoalaLogo from '$lib/components/KoalaLogo.svelte';
 
 	const snakeWorkflow = `name: Generate Contribution Snake
@@ -62,7 +66,7 @@ jobs:
 			</p>
 
 			<div class="info-box">
-				<span class="box-icon">💡</span>
+				<span class="box-icon"><Lightbulb size={22} weight="duotone" aria-hidden="true" /></span>
 				<div>
 					<strong>Example:</strong> For username <code>Shik3i</code>, the repository is located at
 					<a href="https://github.com/Shik3i/Shik3i" target="_blank" rel="noopener noreferrer"
@@ -147,7 +151,7 @@ jobs:
 			</div>
 
 			<div class="warning-box">
-				<span class="box-icon">🔐</span>
+				<span class="box-icon"><LockKey size={22} weight="duotone" aria-hidden="true" /></span>
 				<div>
 					<strong>Permission and supply-chain note:</strong><br />
 					The copied workflow grants only <code>contents: write</code>, which is required to publish
@@ -175,18 +179,8 @@ jobs:
 					rel="noopener noreferrer"
 					class="ref-link-btn"
 				>
-					<svg
-						width="18"
-						height="18"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M3 7h5l2 2h11v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-						<path d="M3 7V5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2" />
-					</svg>
-					View Shik3i profile repository ↗
+					<FolderOpen size={18} weight="regular" aria-hidden="true" />
+					View Shik3i profile repository <ArrowUpRight size={14} weight="bold" aria-hidden="true" />
 				</a>
 				<a
 					href="https://github.com/Shik3i/Shik3i/tree/main/.github/workflows"
