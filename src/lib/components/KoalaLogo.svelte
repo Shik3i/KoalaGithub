@@ -3,11 +3,12 @@
 </script>
 
 <img
-	src="/assets/brand/koalagithub-logo-128.png"
+	src="/assets/brand/koalagithub-logo-128.webp"
 	srcset="
-		/assets/brand/koalagithub-logo-128.png 128w,
-		/assets/brand/koalagithub-logo-256.png 256w,
-		/assets/brand/koalagithub-logo-512.png 512w
+		/assets/brand/koalagithub-logo-48.webp 48w,
+		/assets/brand/koalagithub-logo-128.webp 128w,
+		/assets/brand/koalagithub-logo-256.webp 256w,
+		/assets/brand/koalagithub-logo-512.webp 512w
 	"
 	sizes={`${size}px`}
 	width={size}

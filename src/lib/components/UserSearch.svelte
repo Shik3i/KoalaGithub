@@ -58,13 +58,18 @@
 			</span>
 
 			<input
+				id="github-username"
 				type="text"
 				bind:value={inputVal}
 				placeholder="Enter GitHub Username (e.g. Shik3i, octocat)"
 				class="username-input"
 				aria-label="GitHub Username"
+				aria-invalid={errorMessage ? 'true' : 'false'}
+				aria-describedby={errorMessage ? 'username-error' : undefined}
 				spellcheck="false"
 				autocomplete="off"
+				autocapitalize="none"
+				maxlength="39"
 			/>
 
 			{#if inputVal !== DEFAULT_USERNAME}
@@ -96,7 +101,7 @@
 	</form>
 
 	{#if errorMessage}
-		<p class="error-msg">{errorMessage}</p>
+		<p id="username-error" class="error-msg" role="alert">{errorMessage}</p>
 	{/if}
 
 	<div class="quick-examples">
@@ -239,6 +244,7 @@
 		gap: 0.5rem;
 		font-size: 0.825rem;
 		color: var(--text-muted);
+		flex-wrap: wrap;
 	}
 
 	.chip-btn {
@@ -247,7 +253,11 @@
 		font-weight: 600;
 		padding: 0.2rem 0.6rem;
 		border-radius: var(--radius-full);
-		transition: all 0.15s ease;
+		min-height: 2rem;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
 		border: 1px solid var(--border-color);
 	}
 

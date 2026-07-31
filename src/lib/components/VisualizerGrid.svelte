@@ -13,7 +13,7 @@
 		<div class="empty-state">
 			<span class="empty-icon">🔍</span>
 			<h3>No visualizers found</h3>
-			<p>Try adjusting your search query, clearing tag filters, or selecting "All Visualizers".</p>
+			<p>Try adjusting your search, category, tag, or workflow filter.</p>
 		</div>
 	{:else}
 		<div class="grid">
@@ -34,6 +34,7 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
 		gap: 1.5rem;
+		min-width: 0;
 	}
 
 	.empty-state {

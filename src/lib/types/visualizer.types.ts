@@ -49,3 +49,4 @@ export type AppTheme = 'light' | 'dark' | 'system';
 
 export type SortOption = 'most-voted' | 'most-stars' | 'alphabetical' | 'recently-added';
 export type SortDirection = 'ascending' | 'descending';
+export type WorkflowFilter = 'all' | 'workflow' | 'instant';

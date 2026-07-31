@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import KoalaLogo from './KoalaLogo.svelte';
 	import type { AppTheme } from '$lib/types/visualizer.types';
 
@@ -8,7 +9,8 @@
 
 	onMount(() => {
 		const updateHeaderSize = () => {
-			compact = window.scrollY > 0;
+			const nextCompact = window.scrollY > 0;
+			if (compact !== nextCompact) compact = nextCompact;
 		};
 		updateHeaderSize();
 		window.addEventListener('scroll', updateHeaderSize, { passive: true });
@@ -49,6 +51,10 @@
 			document.body.setAttribute('data-theme', theme);
 		}
 	}
+
+	function isActive(path: string): boolean {
+		return path === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(path);
+	}
 </script>
 
 <header class="header" class:compact>
@@ -61,11 +67,31 @@
 			</div>
 		</a>
 
-		<nav class="nav">
-			<a href="/" class="nav-link">Hub</a>
-			<a href="/guide" class="nav-link">Guide</a>
-			<a href="/about" class="nav-link">About</a>
-			<a href="/privacy" class="nav-link">Privacy</a>
+		<nav class="nav" aria-label="Primary navigation">
+			<a
+				href="/"
+				class="nav-link"
+				class:active={isActive('/')}
+				aria-current={isActive('/') ? 'page' : undefined}>Hub</a
+			>
+			<a
+				href="/guide"
+				class="nav-link"
+				class:active={isActive('/guide')}
+				aria-current={isActive('/guide') ? 'page' : undefined}>Guide</a
+			>
+			<a
+				href="/about"
+				class="nav-link"
+				class:active={isActive('/about')}
+				aria-current={isActive('/about') ? 'page' : undefined}>About</a
+			>
+			<a
+				href="/privacy"
+				class="nav-link"
+				class:active={isActive('/privacy')}
+				aria-current={isActive('/privacy') ? 'page' : undefined}>Privacy</a
+			>
 		</nav>
 
 		<div class="actions">
@@ -221,10 +247,13 @@
 		color: var(--text-muted);
 		padding: 0.4rem 0.6rem;
 		border-radius: var(--radius-sm);
-		transition: all 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
 	}
 
-	.nav-link:hover {
+	.nav-link:hover,
+	.nav-link.active {
 		color: var(--text-main);
 		background-color: var(--bg-subtle);
 	}
@@ -244,7 +273,10 @@
 	}
 
 	.theme-btn {
-		padding: 4px 8px;
+		display: inline-grid;
+		place-items: center;
+		width: 2.25rem;
+		height: 2.25rem;
 		border-radius: var(--radius-full);
 		font-size: 0.85rem;
 		transition: background-color 0.2s ease;
@@ -260,7 +292,9 @@
 		color: var(--text-muted);
 		display: flex;
 		align-items: center;
-		padding: 6px;
+		width: 2.5rem;
+		height: 2.5rem;
+		justify-content: center;
 		border-radius: var(--radius-md);
 		transition:
 			color 0.15s ease,

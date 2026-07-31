@@ -10,13 +10,15 @@
 		Visualizer,
 		VisualizerCategory,
 		SortDirection,
-		SortOption
+		SortOption,
+		WorkflowFilter
 	} from '$lib/types/visualizer.types';
 
 	let activeUsername = $state(DEFAULT_USERNAME);
 	let selectedCategory = $state<VisualizerCategory | 'all'>('all');
 	let searchQuery = $state('');
 	let selectedTag = $state<string | null>(null);
+	let workflowFilter = $state<WorkflowFilter>('all');
 	let selectedSort = $state<SortOption>('most-voted');
 	let sortDirection = $state<SortDirection>('descending');
 	let visualizerList = $state<Visualizer[]>(FALLBACK_VISUALIZERS);
@@ -139,6 +141,11 @@
 					return false;
 				}
 
+				// Workflow requirement filter
+				const requiresWorkflow = Boolean(v.actionWorkflowYaml);
+				if (workflowFilter === 'workflow' && !requiresWorkflow) return false;
+				if (workflowFilter === 'instant' && requiresWorkflow) return false;
+
 				// Search query filter
 				if (searchQuery.trim()) {
 					const q = searchQuery.toLowerCase().trim();
@@ -179,11 +186,11 @@
 	<div class="container hero-container">
 		<img
 			class="hero-logo"
-			src="/assets/brand/koalagithub-logo-256.png"
+			src="/assets/brand/koalagithub-logo-256.webp"
 			srcset="
-				/assets/brand/koalagithub-logo-128.png 128w,
-				/assets/brand/koalagithub-logo-256.png 256w,
-				/assets/brand/koalagithub-logo-512.png 512w
+				/assets/brand/koalagithub-logo-128.webp 128w,
+				/assets/brand/koalagithub-logo-256.webp 256w,
+				/assets/brand/koalagithub-logo-512.webp 512w
 			"
 			sizes="(max-width: 640px) 132px, 180px"
 			width="180"
@@ -215,13 +222,14 @@
 			bind:selectedCategory
 			bind:searchQuery
 			bind:selectedTag
+			bind:workflowFilter
 			bind:selectedSort
 			bind:sortDirection
 			totalCount={filteredVisualizers.length}
 			{availableTags}
 		/>
 
-		{#if selectedCategory === 'configured'}
+		{#if selectedCategory === 'configured' || workflowFilter === 'workflow'}
 			<div class="category-info-banner">
 				<span class="banner-icon">⚙️</span>
 				<div class="banner-text">
@@ -232,8 +240,8 @@
 						<code>output</code>
 						branch or the default branch. A preview appears only after that file exists for
 						<strong>{activeUsername}</strong>. Read the
-						<a href="/guide" class="banner-guide-link">Complete Setup Guide 📖</a> or copy the 1-click
-						workflow shown on each card.
+						<a href="/guide" class="banner-guide-link">Complete setup guide</a> or copy the workflow shown
+						on each card.
 					</p>
 				</div>
 			</div>

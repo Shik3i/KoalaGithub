@@ -15,7 +15,7 @@
 		</div>
 
 		<div class="footer-links">
-			<a href="/guide">Setup Guide 📖</a>
+			<a href="/guide">Setup Guide</a>
 			<a href="/about">About KoalaGitHub</a>
 			<a href="/privacy">Privacy Policy</a>
 			<a href="https://koalastuff.net/legal" target="_blank" rel="noopener noreferrer"

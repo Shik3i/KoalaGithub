@@ -1,10 +1,16 @@
 <script lang="ts">
-	import type { VisualizerCategory, SortDirection, SortOption } from '$lib/types/visualizer.types';
+	import type {
+		VisualizerCategory,
+		SortDirection,
+		SortOption,
+		WorkflowFilter
+	} from '$lib/types/visualizer.types';
 
 	let {
 		selectedCategory = $bindable<VisualizerCategory | 'all'>('all'),
 		searchQuery = $bindable(''),
 		selectedTag = $bindable<string | null>(null),
+		workflowFilter = $bindable<WorkflowFilter>('all'),
 		selectedSort = $bindable<SortOption>('most-voted'),
 		sortDirection = $bindable<SortDirection>('descending'),
 		totalCount = 0,
@@ -13,6 +19,7 @@
 		selectedCategory?: VisualizerCategory | 'all';
 		searchQuery?: string;
 		selectedTag?: string | null;
+		workflowFilter?: WorkflowFilter;
 		selectedSort?: SortOption;
 		sortDirection?: SortDirection;
 		totalCount?: number;
@@ -33,16 +40,21 @@
 		alphabetical: ['Visualizer names from A to Z.', 'Visualizer names from Z to A.'],
 		'recently-added': ['Oldest registry entries first.', 'Newest registry entries first.']
 	};
+
+	const WORKFLOW_FILTERS: { key: WorkflowFilter; label: string }[] = [
+		{ key: 'all', label: 'All' },
+		{ key: 'workflow', label: 'Workflow' },
+		{ key: 'instant', label: 'No workflow' }
+	];
 </script>
 
 <div class="filter-bar-container">
 	<!-- Category Chips (Single Row, No Wrap) -->
-	<div class="category-chips" role="tablist" aria-label="Visualizer Categories">
+	<div class="category-chips" role="group" aria-label="Visualizer categories">
 		{#each CATEGORIES as cat (cat.key)}
 			<button
 				type="button"
-				role="tab"
-				aria-selected={selectedCategory === cat.key}
+				aria-pressed={selectedCategory === cat.key}
 				class="category-chip"
 				class:active={selectedCategory === cat.key}
 				onclick={() => (selectedCategory = cat.key)}
@@ -69,11 +81,13 @@
 				<line x1="21" y1="21" x2="16.65" y2="16.65" />
 			</svg>
 			<input
-				type="text"
+				type="search"
 				bind:value={searchQuery}
 				placeholder="Filter visualizers by keyword or tag..."
 				class="filter-search-input"
 				aria-label="Filter visualizers"
+				autocomplete="off"
+				spellcheck="false"
 			/>
 			{#if searchQuery}
 				<button
@@ -122,6 +136,21 @@
 			</button>
 		</div>
 	</div>
+	<fieldset class="workflow-filter">
+		<legend>Setup:</legend>
+		<div class="workflow-options">
+			{#each WORKFLOW_FILTERS as option (option.key)}
+				<button
+					type="button"
+					class:active={workflowFilter === option.key}
+					aria-pressed={workflowFilter === option.key}
+					onclick={() => (workflowFilter = option.key)}
+				>
+					{option.label}
+				</button>
+			{/each}
+		</div>
+	</fieldset>
 	<p class="sort-help" role="status">
 		{SORT_DESCRIPTIONS[selectedSort as SortOption][sortDirection === 'ascending' ? 0 : 1]}
 	</p>
@@ -148,7 +177,7 @@
 		</div>
 	{/if}
 
-	<div class="results-meta">
+	<div class="results-meta" role="status" aria-live="polite">
 		Showing <strong>{totalCount}</strong> visualizer{totalCount === 1 ? '' : 's'}
 	</div>
 </div>
@@ -188,7 +217,11 @@
 		font-weight: 600;
 		white-space: nowrap;
 		flex-shrink: 0;
-		transition: all 0.15s ease;
+		min-height: 2.5rem;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
 		box-shadow: var(--shadow-sm);
 	}
 
@@ -242,6 +275,8 @@
 		right: 0.75rem;
 		color: var(--text-muted);
 		font-size: 0.8rem;
+		min-width: 2.5rem;
+		min-height: 2.5rem;
 	}
 
 	.sort-wrapper {
@@ -266,12 +301,13 @@
 		font-size: 0.875rem;
 		font-weight: 600;
 		outline: none;
+		min-height: 2.5rem;
 	}
 
 	.direction-toggle {
 		display: inline-grid;
-		width: 2.35rem;
-		height: 2.35rem;
+		width: 2.5rem;
+		height: 2.5rem;
 		place-items: center;
 		flex: 0 0 auto;
 		border: 1px solid var(--border-color);
@@ -307,6 +343,52 @@
 		font-size: 0.75rem;
 	}
 
+	.workflow-filter {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0;
+		border: 0;
+		padding: 0;
+	}
+
+	.workflow-filter legend {
+		float: left;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--text-muted);
+	}
+
+	.workflow-options {
+		display: inline-flex;
+		min-width: 0;
+		padding: 0.2rem;
+		border: 1px solid var(--border-color);
+		border-radius: var(--radius-md);
+		background: var(--bg-card);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.workflow-options button {
+		padding: 0.35rem 0.7rem;
+		border-radius: calc(var(--radius-md) - 0.2rem);
+		color: var(--text-muted);
+		font-size: 0.8rem;
+		font-weight: 650;
+		white-space: nowrap;
+		min-height: 2.5rem;
+	}
+
+	.workflow-options button:hover {
+		color: var(--text-main);
+		background: var(--bg-card-hover);
+	}
+
+	.workflow-options button.active {
+		color: var(--brand-on-solid);
+		background: var(--brand-solid);
+	}
+
 	.tags-container::-webkit-scrollbar {
 		display: none;
 	}
@@ -321,7 +403,11 @@
 		border: 1px solid transparent;
 		white-space: nowrap;
 		flex-shrink: 0;
-		transition: all 0.15s ease;
+		min-height: 2rem;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
 	}
 
 	.tag-chip:hover,
@@ -354,6 +440,19 @@
 
 		.sort-wrapper {
 			justify-content: flex-end;
+		}
+
+		.workflow-filter {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+
+		.workflow-options {
+			width: 100%;
+		}
+
+		.workflow-options button {
+			flex: 1;
 		}
 	}
 </style>

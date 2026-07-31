@@ -380,6 +380,7 @@
 		transition:
 			border-color 0.2s ease,
 			box-shadow 0.2s ease;
+		min-width: 0;
 	}
 
 	.card:hover {
@@ -398,6 +399,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
+		min-width: 0;
 	}
 
 	.card-title {
@@ -405,6 +407,7 @@
 		font-weight: 700;
 		color: var(--text-main);
 		line-height: 1.3;
+		overflow-wrap: anywhere;
 	}
 
 	.badge-row {
@@ -438,8 +441,14 @@
 		border: 1px solid var(--border-color);
 		cursor: pointer;
 		user-select: none;
-		transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+		transition:
+			background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+			border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+			color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+			box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+			transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+		min-height: 2rem;
 	}
 
 	.vote-btn .upvote-arrow {
@@ -491,7 +500,11 @@
 		padding: 4px 8px;
 		border-radius: var(--radius-md);
 		border: 1px solid var(--border-color);
-		transition: all 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
+		min-height: 2rem;
 	}
 
 	.star-count {
@@ -573,7 +586,11 @@
 		background-color: var(--bg-subtle);
 		color: var(--text-muted);
 		border: 1px solid var(--border-color);
-		transition: all 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
+		min-height: 2rem;
 	}
 
 	.theme-chip:hover,
@@ -784,7 +801,10 @@
 		padding: 0.25rem 0.6rem;
 		border-radius: var(--radius-sm);
 		cursor: pointer;
-		transition: all 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
 	}
 
 	.workflow-prerequisite {
@@ -866,5 +886,33 @@
 		white-space: pre-wrap;
 		word-break: break-all;
 		margin: 0;
+	}
+
+	@media (max-width: 420px) {
+		.card {
+			padding: 1rem;
+		}
+
+		.card-header {
+			flex-wrap: wrap;
+		}
+
+		.header-main {
+			width: 100%;
+		}
+
+		.header-links {
+			width: 100%;
+		}
+
+		.repo-link {
+			width: 100%;
+			justify-content: center;
+		}
+
+		.error-actions {
+			flex-wrap: wrap;
+			justify-content: center;
+		}
 	}
 </style>

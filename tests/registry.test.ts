@@ -73,6 +73,17 @@ describe('Visualizer Registry Data Integrity', () => {
 		}
 	});
 
+	it('keeps workflow and non-workflow entries distinguishable', () => {
+		const workflowEntries = VISUALIZERS.filter((item) => Boolean(item.actionWorkflowYaml));
+		const instantEntries = VISUALIZERS.filter((item) => !item.actionWorkflowYaml);
+
+		expect(workflowEntries.length).toBeGreaterThan(0);
+		expect(instantEntries.length).toBeGreaterThan(0);
+		for (const item of workflowEntries) {
+			expect(item.requiresExternalSetup).toBe(true);
+		}
+	});
+
 	it('keeps the two snake generators separate', () => {
 		const platane = VISUALIZERS.find((item) => item.id === 'platane-contribution-snake');
 		const snakeAndCommits = VISUALIZERS.find((item) => item.id === 'dahan8473-snake-and-commits');
