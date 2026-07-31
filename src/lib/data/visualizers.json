@@ -740,32 +740,6 @@
     "estimatedHeight": 280
   },
   {
-    "id": "github-profile-views-counter",
-    "name": "GitHub Profile Views Counter",
-    "description": "A compact SVG badge that counts profile views and supports multiple badge styles.",
-    "category": "badges",
-    "tags": ["badge", "views", "counter", "profile", "svg"],
-    "previewType": "image",
-    "imageFormat": "svg",
-    "imageUrlTemplate": "https://komarev.com/ghpvc/?username={username}&style={theme}",
-    "markdownTemplate": "[![Profile Views](https://komarev.com/ghpvc/?username={username}&style={theme})](https://github.com/antonkomarev/github-profile-views-counter)",
-    "websiteUrl": "https://komarev.com/sources/github-profile-views-counter",
-    "repositoryUrl": "https://github.com/antonkomarev/github-profile-views-counter",
-    "themes": [
-      { "key": "flat", "label": "Flat" },
-      { "key": "flat-square", "label": "Flat Square" },
-      { "key": "for-the-badge", "label": "For The Badge" },
-      { "key": "plastic", "label": "Plastic" },
-      { "key": "social", "label": "Social" }
-    ],
-    "defaultTheme": "flat",
-    "requiresUsername": true,
-    "requiresExternalSetup": false,
-    "addedAt": "2026-07-31",
-    "enabled": true,
-    "estimatedHeight": 30
-  },
-  {
     "id": "github-space-shooter",
     "name": "GitHub Space Shooter",
     "description": "Turns contribution activity into an animated space shooter GIF generated in your own workflow.",
