@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM --platform=$BUILDPLATFORM node:24.18.0-alpine3.24 AS frontend-builder
+FROM --platform=$BUILDPLATFORM node:26.5.0-alpine3.24 AS frontend-builder
 WORKDIR /app
 
 ARG APP_VERSION=dev
