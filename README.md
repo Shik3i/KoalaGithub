@@ -87,7 +87,9 @@ The central registry is `src/lib/data/visualizers.json`.
 
 Visualizers that require private third-party account credentials or mandatory external secrets
 (for example WakaTime API credentials) are not listed. The directory only includes previews and
-workflows that can be used without handing KoalaGitHub private service credentials.
+workflows that can be used without handing KoalaGitHub private service credentials. This also
+excludes generators that require a personal GitHub PAT as a mandatory repository secret, such as
+`jstrieb/github-stats`.
 
 ## Privacy
 
