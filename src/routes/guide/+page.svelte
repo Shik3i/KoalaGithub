@@ -1,10 +1,43 @@
 <script lang="ts">
 	import KoalaLogo from '$lib/components/KoalaLogo.svelte';
+
+	const snakeWorkflow = `name: Generate Contribution Snake
+
+on:
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b
+        with:
+          github_user_name: \${{ github.repository_owner }}
+          outputs: |
+            output/github-snake.svg
+            output/github-snake-dark.svg?palette=github-dark
+      - uses: crazy-max/ghaction-github-pages@1d6ee9b181a81033a16bd707a1401afa978daab4
+        with:
+          target_branch: output
+          build_dir: output
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}`;
 </script>
 
 <svelte:head>
 	<title>Guide: How to Create GitHub Profile README & Action Workflows | KoalaGitHub</title>
-	<meta name="description" content="Step-by-step guide on creating a special GitHub profile README, running automated daily GitHub Action workflows, and adding animated contribution graphs." />
+	<meta
+		name="description"
+		content="Step-by-step guide on creating a special GitHub profile README, running automated daily GitHub Action workflows, and adding animated contribution graphs."
+	/>
+	<link rel="canonical" href="https://github.koalastuff.net/guide" />
+	<meta property="og:url" content="https://github.koalastuff.net/guide" />
 </svelte:head>
 
 <div class="guide-page container">
@@ -13,7 +46,8 @@
 		<KoalaLogo size={56} />
 		<h1 class="guide-title">GitHub Profile README & Action Workflows Guide</h1>
 		<p class="guide-subtitle">
-			Everything you need to know about setting up your special profile README, running daily automated GitHub Action visualizers, and showcasing live contribution graphs.
+			Create the special profile repository, add visualizer Markdown, and safely run generators with
+			GitHub Actions.
 		</p>
 	</div>
 
@@ -21,92 +55,102 @@
 		<!-- Step 1: Special Repository -->
 		<section class="guide-card">
 			<div class="card-step-badge">Step 1</div>
-			<h2>Creating Your Special Profile Repository</h2>
+			<h2>Create your profile repository</h2>
 			<p>
-				GitHub has a special feature: when you create a repository with the <strong>exact same name as your GitHub username</strong>, GitHub displays the contents of that repository's <code>README.md</code> at the top of your public profile page!
+				GitHub displays a repository's <code>README.md</code> on your public profile when the public repository
+				has the same name as your GitHub username.
 			</p>
-			
+
 			<div class="info-box">
 				<span class="box-icon">💡</span>
 				<div>
 					<strong>Example:</strong> For username <code>Shik3i</code>, the repository is located at
-					<a href="https://github.com/Shik3i/Shik3i" target="_blank" rel="noreferrer">github.com/Shik3i/Shik3i ↗</a>.
+					<a href="https://github.com/Shik3i/Shik3i" target="_blank" rel="noopener noreferrer"
+						>github.com/Shik3i/Shik3i ↗</a
+					>.
 				</div>
 			</div>
 
 			<ol class="step-list">
-				<li>Go to <a href="https://github.com/new" target="_blank" rel="noreferrer">github.com/new ↗</a>.</li>
+				<li>
+					Go to <a href="https://github.com/new" target="_blank" rel="noopener noreferrer"
+						>github.com/new ↗</a
+					>.
+				</li>
 				<li>In the <strong>Repository name</strong> field, enter your exact GitHub username.</li>
 				<li>Ensure the repository is set to <strong>Public</strong>.</li>
-				<li>Check <strong>"Add a README file"</strong>.</li>
+				<li>Select <strong>Add a README file</strong>.</li>
 				<li>Click <strong>Create repository</strong>.</li>
+				<li>
+					Edit <code>README.md</code>; changes appear on your public profile after you commit them.
+				</li>
 			</ol>
 		</section>
 
 		<!-- Step 2: Instant Visualizers -->
 		<section class="guide-card">
 			<div class="card-step-badge">Step 2</div>
-			<h2>Adding Instant Visualizers (Streak Stats, Activity Graphs, Bonsai)</h2>
+			<h2>Add an instant visualizer</h2>
 			<p>
-				Instant visualizers (like <strong>Kodama Bonsai Tree</strong>, <strong>GitHub Streak Stats</strong>, or <strong>Activity Graphs</strong>) do not require any configuration in your repository. They generate SVG images on the fly!
+				Instant visualizers such as <strong>Kodama Bonsai Tree</strong>,
+				<strong>GitHub Streak Stats</strong>, or <strong>Activity Graphs</strong> do not require a workflow
+				in your repository. Their providers generate the image when GitHub requests its URL.
 			</p>
 
 			<ol class="step-list">
-				<li>Search your username at <a href="/">KoalaGitHub Hub</a>.</li>
-				<li>Select your favorite theme for any visualizer card.</li>
+				<li>Enter your username in the <a href="/">KoalaGitHub Hub</a>.</li>
+				<li>Select a supported theme.</li>
 				<li>Click <strong>Copy Markdown</strong>.</li>
-				<li>Edit your profile <code>README.md</code> on GitHub and paste the snippet where you want it to appear!</li>
+				<li>
+					Edit your profile <code>README.md</code> on GitHub and paste the snippet where you want it to
+					appear.
+				</li>
+				<li>Preview the profile and verify that the third-party image provider is available.</li>
 			</ol>
 		</section>
 
 		<!-- Step 3: Self-Hosted GitHub Actions -->
-		<section class="guide-card">
+		<section class="guide-card" id="generated-visualizers">
 			<div class="card-step-badge">Step 3</div>
-			<h2>Setting Up Daily GitHub Action Workflows (Snake, Pac-Man, 3D Contrib)</h2>
+			<h2>Set up a generated visualizer</h2>
 			<p>
-				Some visualizers (such as the <strong>Contribution Grid Snake</strong> or <strong>Arcade Pac-Man Graph</strong>) are interactive animations compiled automatically once a day by a <strong>GitHub Action workflow</strong> running in your repository.
+				Generators such as the <strong>Contribution Grid Snake</strong> and
+				<strong>Arcade Pac-Man Graph</strong> need a workflow in your profile repository. The workflow
+				creates an SVG on a schedule and can also be started manually.
 			</p>
 
-			<h3>How to Add a Workflow File:</h3>
+			<h3>Add and verify the workflow</h3>
 			<ol class="step-list">
-				<li>In your profile repository, create a directory path named <code>.github/workflows/</code>.</li>
-				<li>Create a new file inside it, for example <code>.github/workflows/snake.yml</code>.</li>
-				<li>Copy the 1-click <strong>📋 Copy Workflow (.yml)</strong> code from KoalaGitHub into that file.</li>
-				<li>Commit the file to your repository's <code>main</code> branch.</li>
+				<li>Open your profile repository and create <code>.github/workflows/snake.yml</code>.</li>
+				<li>
+					Copy the 1-click <strong>📋 Copy Workflow (.yml)</strong> code from KoalaGitHub into that file.
+				</li>
+				<li>Commit it to the repository's default branch.</li>
+				<li>
+					Open the repository's <strong>Actions</strong> tab, select the workflow, and run
+					<strong>Run workflow</strong>. Scheduled workflows run only from the default branch and
+					may start later than their exact cron time.
+				</li>
+				<li>
+					Wait for a successful run. Confirm that the generated file path matches the path in the
+					Markdown snippet before adding it to <code>README.md</code>.
+				</li>
 			</ol>
 
 			<div class="code-example-box">
-				<div class="box-title">Example Workflow Configuration (.github/workflows/snake.yml):</div>
-				<pre class="yaml-code"><code>name: Generate Snake
-
-on:
-  schedule:
-    - cron: "0 0 * * *" # Runs automatically every night at 00:00 UTC
-  workflow_dispatch: # Allows manual trigger anytime from Actions tab
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: Platane/snk@v3
-        with:
-          github_user_name: ${'{'} secrets.GITHUB_USERNAME }
-          outputs: |
-            output/snake.svg
-            output/snake-dark.svg?palette=github-dark
-      - uses: crazy-max/ghaction-github-pages@v31
-        with:
-          target_branch: output
-          build_dir: output
-        env:
-          GITHUB_TOKEN: ${'{'} secrets.GITHUB_TOKEN }</code></pre>
+				<div class="box-title">Example: .github/workflows/snake.yml</div>
+				<pre class="yaml-code"><code>{snakeWorkflow}</code></pre>
 			</div>
 
 			<div class="warning-box">
 				<span class="box-icon">🔐</span>
 				<div>
-					<strong>Required Repository Permission:</strong><br />
-					Go to your repo's <strong>Settings → Actions → General → Workflow permissions</strong> and select <strong>"Read and write permissions"</strong>. This permits the workflow to save the compiled SVG image to the <code>output</code> branch!
+					<strong>Permission and supply-chain note:</strong><br />
+					The copied workflow grants only <code>contents: write</code>, which is required to publish
+					the generated file. Actions are pinned to immutable commit SHAs. Repository or
+					organization policy may still block writes; if so, review
+					<strong>Settings → Actions → General → Workflow permissions</strong>. Never copy an
+					unreviewed workflow or grant broader permissions just to make a run pass.
 				</div>
 			</div>
 		</section>
@@ -116,17 +160,36 @@ jobs:
 			<div class="card-step-badge reference-badge">Live Reference</div>
 			<h2>Real-World Example Repository</h2>
 			<p>
-				Want to see a fully configured working profile README in action? Check out the reference implementation:
+				Want to see a fully configured working profile README in action? Check out the reference
+				implementation:
 			</p>
 
 			<div class="reference-links">
-				<a href="https://github.com/Shik3i/Shik3i" target="_blank" rel="noreferrer" class="ref-link-btn">
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+				<a
+					href="https://github.com/Shik3i/Shik3i"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="ref-link-btn"
+				>
+					<svg
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<path d="M3 7h5l2 2h11v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+						<path d="M3 7V5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2" />
 					</svg>
 					View Shik3i Profile Repository ↗
 				</a>
-				<a href="https://github.com/Shik3i/Shik3i/tree/main/.github/workflows" target="_blank" rel="noreferrer" class="ref-link-btn secondary">
+				<a
+					href="https://github.com/Shik3i/Shik3i/tree/main/.github/workflows"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="ref-link-btn secondary"
+				>
 					📂 View Live Workflow Files (.github/workflows) ↗
 				</a>
 			</div>
@@ -222,7 +285,8 @@ jobs:
 		line-height: 1.5;
 	}
 
-	.info-box, .warning-box {
+	.info-box,
+	.warning-box {
 		display: flex;
 		align-items: flex-start;
 		gap: 0.75rem;
@@ -276,13 +340,17 @@ jobs:
 	}
 
 	.reference-card {
-		border-color: rgba(99, 102, 241, 0.3);
-		background: linear-gradient(135deg, var(--bg-card) 0%, rgba(99, 102, 241, 0.03) 100%);
+		border-color: color-mix(in srgb, var(--brand-primary) 30%, transparent);
+		background: linear-gradient(
+			135deg,
+			var(--bg-card) 0%,
+			color-mix(in srgb, var(--brand-primary) 3%, transparent) 100%
+		);
 	}
 
 	.reference-badge {
-		background-color: rgba(99, 102, 241, 0.15);
-		color: #818cf8;
+		background-color: color-mix(in srgb, var(--brand-primary) 15%, transparent);
+		color: var(--brand-primary);
 	}
 
 	.reference-links {
@@ -300,14 +368,14 @@ jobs:
 		border-radius: var(--radius-md);
 		font-weight: 600;
 		font-size: 0.9rem;
-		background-color: var(--brand-primary);
-		color: #ffffff;
+		background-color: var(--brand-solid);
+		color: var(--brand-on-solid);
 		transition: background-color 0.15s ease;
 	}
 
 	.ref-link-btn:hover {
-		background-color: var(--brand-hover);
-		color: #ffffff;
+		background-color: var(--brand-solid-hover);
+		color: var(--brand-on-solid);
 	}
 
 	.ref-link-btn.secondary {

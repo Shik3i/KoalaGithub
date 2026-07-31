@@ -1,72 +1,175 @@
+<script lang="ts">
+	import { clearDeviceId, getStoredDeviceId } from '$lib/utils/device';
+
+	let deleting = $state(false);
+	let deletionStatus = $state('');
+	let deletionError = $state(false);
+
+	async function deleteVotes() {
+		const deviceId = getStoredDeviceId();
+		if (!deviceId) {
+			deletionError = false;
+			deletionStatus = 'No vote identifier is stored in this browser.';
+			return;
+		}
+		deleting = true;
+		deletionStatus = '';
+		try {
+			const response = await fetch('/api/votes', {
+				method: 'DELETE',
+				headers: { 'X-Device-ID': deviceId }
+			});
+			if (!response.ok) throw new Error(`HTTP ${response.status}`);
+			const result: unknown = await response.json();
+			const deleted =
+				result &&
+				typeof result === 'object' &&
+				typeof (result as { deleted?: unknown }).deleted === 'number'
+					? (result as { deleted: number }).deleted
+					: 0;
+			clearDeviceId();
+			deletionError = false;
+			deletionStatus = `${deleted} stored vote${deleted === 1 ? '' : 's'} deleted. The local identifier was removed too.`;
+		} catch {
+			deletionError = true;
+			deletionStatus = 'Votes could not be deleted right now. Please try again later.';
+		} finally {
+			deleting = false;
+		}
+	}
+</script>
+
 <svelte:head>
 	<title>Privacy Policy – KoalaGitHub</title>
+	<meta
+		name="description"
+		content="How KoalaGitHub processes device identifiers, votes, server requests, local storage, and third-party preview requests."
+	/>
+	<link rel="canonical" href="https://github.koalastuff.net/privacy" />
+	<meta property="og:url" content="https://github.koalastuff.net/privacy" />
 </svelte:head>
 
 <div class="container page-container">
 	<header class="page-header">
+		<p class="eyebrow">Last updated: 31 July 2026</p>
 		<h1>Privacy Policy</h1>
-		<p class="lead">Transparent information about data handling, anonymous upvoting, and privacy on KoalaGitHub (<code>github.koalastuff.net</code>).</p>
+		<p class="lead">
+			How data is processed when you use KoalaGitHub at <code>github.koalastuff.net</code>.
+		</p>
 	</header>
 
 	<div class="content-card">
-		<h2>1. Overview & Backend Architecture</h2>
-		<p>
-			KoalaGitHub is an open-source web application designed with a strict <strong>privacy-first approach</strong>. It consists of a static SvelteKit frontend served by an embedded Go backend server.
-		</p>
-		<ul>
-			<li><strong>No User Accounts or Registration</strong>: You do not need to register, log in, or provide any personal information (such as name or email) to use KoalaGitHub.</li>
-			<li><strong>No Tracking Cookies or Ad Networks</strong>: We do not set any tracking cookies, execute advertising scripts, or use third-party analytics (no Google Analytics, no Plausible, no Telemetry).</li>
-			<li><strong>No IP Logging for Votes</strong>: IP addresses are not stored or associated with user actions.</li>
-		</ul>
+		<section>
+			<h2>1. Controller and contact</h2>
+			<p>
+				The operator identified in the
+				<a href="https://koalastuff.net/legal" target="_blank" rel="noopener noreferrer"
+					>KoalaStuff legal notice ↗</a
+				>
+				is responsible for this service. Use the contact details published there for privacy questions
+				or requests.
+			</p>
+		</section>
 
-		<h2>2. Anonymous Device-Based Upvoting System</h2>
-		<p>
-			To allow visitors to upvote their favorite visualizers without requiring an account or login, KoalaGitHub uses a pseudonymous **Device ID**:
-		</p>
-		<ul>
-			<li><strong>Device Identifier (UUID v4)</strong>: When you visit KoalaGitHub, a random UUID v4 string (e.g. <code>koala_device_id</code>) is generated locally in your browser and saved in <code>localStorage</code>.</li>
-			<li><strong>Vote Registration</strong>: When you click an upvote button, your pseudonymous <code>device_id</code> and the target <code>visualizer_id</code> are transmitted to <code>POST /api/visualizers/&#123;id&#125;/vote</code> and stored in our local SQLite database.</li>
-			<li><strong>Purpose</strong>: This identifier is used exclusively to keep track of which visualizers you have upvoted on your current device so you can toggle your votes on or off. It is completely pseudonymous and is never linked to your identity, IP address, or GitHub account.</li>
-		</ul>
+		<section>
+			<h2>2. Data processed by the service</h2>
+			<p>
+				No account, name, email address, tracking cookie, advertising script, or analytics service
+				is required.
+			</p>
+			<ul>
+				<li>
+					<strong>Server requests:</strong> The web server and infrastructure providers necessarily process
+					connection data such as IP address, request time, path, user agent, and response status to deliver
+					and protect the service. KoalaGitHub does not write IP addresses into its SQLite vote database.
+					Infrastructure security or access logs may be retained separately.
+				</li>
+				<li>
+					<strong>Votes:</strong> A random UUID v4 device identifier and the selected visualizer ID are
+					transmitted to the API and stored in SQLite. They are not intentionally connected to a GitHub
+					account, name, or email address.
+				</li>
+				<li>
+					<strong>Abuse protection:</strong> The application temporarily counts vote requests per combination
+					of IP address and device identifier in memory. These counters expire after one hour and are
+					not persisted by the application.
+				</li>
+			</ul>
+		</section>
 
-		<h2>3. Local Storage Usage</h2>
-		<p>
-			We use your browser's <code>localStorage</code> for two specific functional purposes only:
-		</p>
-		<ol>
-			<li><code>koala-theme</code>: Stores your selected interface theme (Light, Dark, or System mode).</li>
-			<li><code>koala_device_id</code>: Stores your pseudonymous UUID v4 device identifier for visualizer upvoting.</li>
-		</ol>
-		<p>
-			Both entries remain inside your browser and can be cleared at any time by clearing your browser site data or local storage.
-		</p>
+		<section>
+			<h2>3. Purpose, legal basis, and retention</h2>
+			<p>
+				Functional storage is used to provide vote toggling, aggregate vote totals, service
+				delivery, and abuse prevention. The intended legal basis is legitimate interests under
+				Article 6(1)(f) GDPR: operating a useful and secure community directory without user
+				accounts or cross-site tracking.
+			</p>
+			<p>
+				Vote records remain until you remove the vote, use the deletion control below, the
+				visualizer is removed, or the service is discontinued. Transient in-memory abuse counters
+				expire after one hour. Hosting logs follow the infrastructure provider's operational
+				retention rules.
+			</p>
+		</section>
 
-		<h2>4. Third-Party Visualizer Requests & Image Previews</h2>
-		<p>
-			<strong>Important Transparency Notice:</strong> When you view live visualizer preview images, stats cards, graphs, or bonsai trees on KoalaGitHub, your browser makes direct HTTPS requests to third-party hosting services (such as Vercel, GitHub raw content, demolab, etc.).
-		</p>
-		<p>
-			During these HTTP requests, third-party hosting services and visualizer maintainers receive standard web traffic data directly from your browser, which may include:
-		</p>
-		<ul>
-			<li>Your IP address</li>
-			<li>Your browser User-Agent header</li>
-			<li>The requested GitHub username parameter</li>
-			<li>Standard HTTP request timestamp</li>
-		</ul>
-		<p>
-			To protect your privacy, KoalaGitHub applies a restrictive <code>referrerpolicy="no-referrer"</code> attribute to all preview images and external links where practical.
-		</p>
+		<section>
+			<h2>4. Browser storage</h2>
+			<ul>
+				<li><code>koala-theme</code> stores the selected light, dark, or system theme.</li>
+				<li><code>koala_device_id</code> stores the pseudonymous vote identifier.</li>
+			</ul>
+			<p>
+				Clearing site data removes these browser entries. It does not by itself delete an existing
+				vote record from the server because the identifier needed to locate that record would be
+				lost. Use the control below first.
+			</p>
+			<div class="delete-box">
+				<div>
+					<h3>Delete votes from this browser</h3>
+					<p>
+						Deletes every server-side vote associated with the currently stored device identifier.
+					</p>
+				</div>
+				<button type="button" class="danger-button" onclick={deleteVotes} disabled={deleting}>
+					{deleting ? 'Deleting…' : 'Delete my votes'}
+				</button>
+			</div>
+			{#if deletionStatus}
+				<p class:error={deletionError} class="status" role="status">{deletionStatus}</p>
+			{/if}
+		</section>
 
-		<h2>5. Fonts & Asset Hosting</h2>
-		<p>
-			KoalaGitHub does not load font files, scripts, or stylesheets from external CDNs (such as Google Fonts). All typography relies on native system font stacks.
-		</p>
+		<section>
+			<h2>5. Third-party previews and links</h2>
+			<p>
+				Visualizer previews are requested directly by your browser from their respective providers,
+				including GitHub-hosted content and independent services. Those providers receive normal
+				HTTP request data, including your IP address, browser information, request time, and the
+				GitHub username embedded in the preview URL. KoalaGitHub uses
+				<code>referrerpolicy="no-referrer"</code> for preview images and external links where practical,
+				but each provider remains responsible for its own processing.
+			</p>
+			<p>
+				Fonts, application scripts, and styles are served locally; no analytics or advertising
+				network is included.
+			</p>
+		</section>
 
-		<h2>6. Legal Notices</h2>
-		<p>
-			For general legal notices, terms, and operator details of the KoalaStuff ecosystem, please refer to <a href="https://koalastuff.net/legal" target="_blank" rel="noreferrer">koalastuff.net/legal ↗</a>.
-		</p>
+		<section>
+			<h2>6. Recipients, transfers, and your rights</h2>
+			<p>
+				Data may be processed by the service operator, its hosting and network providers, and the
+				third-party preview provider you choose to load. Some preview providers may process data
+				outside the EU/EEA under their own terms.
+			</p>
+			<p>
+				Subject to applicable law, you may request access, correction, deletion, restriction,
+				objection, or data portability. You may also lodge a complaint with a competent data
+				protection authority. Because votes are pseudonymous, include the device identifier when a
+				request concerns a vote record; otherwise the record cannot be reliably attributed to you.
+			</p>
+		</section>
 	</div>
 </div>
 
@@ -75,24 +178,27 @@
 		max-width: 840px;
 		margin: 2.5rem auto 4rem;
 	}
-
 	.page-header {
 		margin-bottom: 2rem;
 		text-align: center;
 	}
-
+	.eyebrow {
+		color: var(--brand-primary);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
 	.page-header h1 {
 		font-size: 2.25rem;
 		font-weight: 800;
 		color: var(--text-main);
 	}
-
 	.lead {
 		font-size: 1.1rem;
 		color: var(--text-muted);
 		margin-top: 0.4rem;
 	}
-
 	.content-card {
 		background-color: var(--bg-card);
 		border: 1px solid var(--border-color);
@@ -100,28 +206,79 @@
 		padding: 2rem;
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
+		gap: 2rem;
 		box-shadow: var(--shadow-sm);
 	}
-
+	section {
+		display: grid;
+		gap: 0.8rem;
+	}
 	h2 {
 		font-size: 1.25rem;
 		font-weight: 700;
 		color: var(--text-main);
 		border-bottom: 1px solid var(--border-color);
 		padding-bottom: 0.4rem;
-		margin-top: 0.5rem;
 	}
-
-	p, ul, ol {
+	p,
+	ul {
 		color: var(--text-main);
-		line-height: 1.6;
+		line-height: 1.65;
 	}
-
-	ul, ol {
+	ul {
 		padding-left: 1.25rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: 0.55rem;
+	}
+	.delete-box {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1rem;
+		background: var(--bg-subtle);
+		border: 1px solid var(--border-color);
+		border-radius: var(--radius-md);
+	}
+	.delete-box h3 {
+		font-size: 1rem;
+	}
+	.delete-box p {
+		margin-top: 0.2rem;
+		font-size: 0.85rem;
+		color: var(--text-muted);
+	}
+	.danger-button {
+		flex: 0 0 auto;
+		border-radius: var(--radius-md);
+		background: var(--error-solid);
+		color: var(--error-on-solid);
+		font-weight: 700;
+		padding: 0.6rem 0.9rem;
+	}
+
+	.danger-button:hover:not(:disabled) {
+		background: var(--error-solid-hover);
+	}
+	.danger-button:disabled {
+		cursor: wait;
+		opacity: 0.65;
+	}
+	.status {
+		color: var(--success-text);
+		font-weight: 600;
+	}
+	.status.error {
+		color: var(--error-text);
+	}
+	@media (max-width: 640px) {
+		.content-card {
+			padding: 1.25rem;
+		}
+		.delete-box {
+			align-items: stretch;
+			flex-direction: column;
+		}
 	}
 </style>

@@ -1,104 +1,96 @@
 # KoalaGitHub 🐨⚡
 
-> Central hub for GitHub profile visualizers, statistics cards, streak graphs, trophies, contribution charts, and badges.
+Directory for GitHub profile visualizers, contribution art, statistics cards, streak graphs, and ready-to-copy workflows.
 
-**Live URL**: [github.koalastuff.net](https://github.koalastuff.net)
+Live URL after deployment: [github.koalastuff.net](https://github.koalastuff.net)
 
----
+## Features
 
-## ✨ Features
+- Compare compatible visualizers for any GitHub username.
+- Switch themes and copy ready-to-use README Markdown.
+- Keep configured generators separate from instant third-party previews.
+- Use pseudonymous per-device votes without an account.
+- Serve the prerendered SvelteKit UI and Go API from one container.
 
-- 🎯 **Universal Profile Comparison**: Enter any GitHub username (default: `Shik3i`) to instantly render all compatible profile visualizers side-by-side.
-- 🎨 **On-The-Fly Theme Switcher**: Change themes (`default`, `dark`, `radical`, `tokyonight`, `github_dark`, `dracula`) directly on supported cards.
-- 🔗 **Shareable URL Syncing**: Share customized results via URL parameter `?user=username`.
-- ⚙️ **Configured vs. Universal Handling**: Differentiates between universal visualizers (instant preview) and configured tools (showing helpful setup guides instead of broken images).
-- 📋 **1-Click Markdown Copy**: Instant inspection and 1-click clipboard copy of ready-to-use profile README Markdown.
-- 🔒 **100% Static & Privacy Focused**: Zero analytics, zero ad trackers, zero cookies, zero backend databases.
-- 🚀 **Caddy & Docker Ready**: Compiles to a 100% static `www/` directory ready for deployment under Caddy or Docker.
+## Stack
 
----
+- SvelteKit 2 and Svelte 5
+- TypeScript and Vitest
+- Go 1.26 with embedded frontend assets
+- SQLite for visualizers, stars, and pseudonymous votes
+- Multi-platform Docker image for `linux/amd64` and `linux/arm64`
 
-## 🛠️ Tech Stack
-
-- **Framework**: [SvelteKit 2](https://kit.svelte.dev/) with Svelte 5 runes
-- **Adapter**: `@sveltejs/adapter-static` (outputs static pages directly to `www/`)
-- **Language**: TypeScript (strict mode)
-- **Testing**: [Vitest](https://vitest.dev/) data integrity test suite
-- **Server**: Caddy / Docker container
-
----
-
-## 🚀 Getting Started Locally
+## Local development
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/Shik3i/KoalaGithub.git
-cd KoalaGithub
-
-# 2. Install dependencies
-npm install
-
-# 3. Start local development server
+npm ci
 npm run dev
 ```
 
-Visit `http://localhost:5173` in your browser.
+The frontend development server runs at `http://localhost:5173`.
 
----
-
-## 🧪 Testing & Verification
+## Verification
 
 ```bash
-# Run Vitest registry integrity tests
-npm test
-
-# Run Svelte & TypeScript typecheck
+npm run lint
 npm run check
-```
-
----
-
-## 📦 Building for Production (`www/` Output)
-
-```bash
+npm run test
 npm run build
+go vet ./internal/... .
+go test ./internal/... .
 ```
 
-This compiles 100% static HTML/CSS/JS files into the `www/` folder. You can upload the contents of `www/` directly to your web server (e.g. running Caddy, Nginx, Apache, or static host).
+`npm ci` runs `svelte-kit sync` through the package `prepare` script. The frontend build writes prerendered and precompressed assets to `www/`; the Go binary embeds that directory.
 
-### Deploying with Docker & Caddy
+## Docker
 
 ```bash
 docker compose up -d --build
 ```
 
-Access the app locally at `http://localhost:8080`.
+The Compose service is available at `http://localhost:8088`. Its SQLite database is stored in the `koala_data` volume. The entrypoint repairs ownership of an existing root-owned volume, then runs the application as UID/GID `10001`.
 
----
+Published images:
 
-## ➕ How to Add a New Visualizer
+```bash
+docker pull ghcr.io/shik3i/koalagithub:v1.2.3
+```
 
-All visualizer metadata is maintained in a single central JSON dataset:
+## Releases
 
-📁 `src/lib/data/visualizers.json`
+Only an exact semantic version tag in the form `vX.Y.Z` triggers `.github/workflows/publish-container.yml`.
 
-To register a new visualizer:
+```bash
+git tag v1.2.3
+git push origin v1.2.3
+```
 
-1. Add a new entry to `src/lib/data/visualizers.json` matching the schema.
-2. Verify that all required fields (`id`, `imageUrlTemplate`, `markdownTemplate`, `themes`, `websiteUrl`, `repositoryUrl`) are provided.
-3. Run `npm test; go test ./...` to verify data integrity.
-4. Submit a Pull Request!
+The workflow:
 
----
+- runs frontend and backend quality gates;
+- injects the tag into the footer and Go health response at build time;
+- builds and pushes `linux/amd64` and `linux/arm64` images to GHCR;
+- publishes exact, SemVer, major/minor, major, and `latest` tags;
+- reuses GitHub Actions and BuildKit caches;
+- attaches BuildKit provenance, an SBOM, and a GitHub artifact attestation.
 
-## 📄 Privacy & Transparency
+The workflow does not commit a generated version file. The pushed tag is the release source of truth, so the footer cannot drift from the container tag.
 
-KoalaGitHub has no tracking scripts, no cookies, and no analytics. However, when displaying third-party visualizer images, your browser makes direct HTTPS requests to third-party providers. A restrictive `referrerpolicy="no-referrer"` attribute is applied where practical.
+## Add a visualizer
 
-For legal notices regarding the KoalaStuff ecosystem, visit [koalastuff.net/legal](https://koalastuff.net/legal).
+The central registry is `src/lib/data/visualizers.json`.
 
----
+1. Add a unique entry with valid HTTPS project and repository URLs.
+2. For configured generators, include a reviewed workflow pinned to immutable action SHAs.
+3. Run the complete verification commands above.
+4. Submit a pull request.
 
-## 📜 License
+## Privacy
+
+KoalaGitHub contains no analytics, advertising trackers, or tracking cookies. It stores pseudonymous device IDs and visualizer IDs for voting. Preview images are loaded directly from third-party providers, which receive normal HTTP request data. The application includes a self-service vote deletion control.
+
+See the in-app Privacy Policy and [KoalaStuff legal notice](https://koalastuff.net/legal).
+
+## License
 
 [MIT License](LICENSE) © KoalaStuff

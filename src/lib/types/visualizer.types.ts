@@ -36,7 +36,6 @@ export interface Visualizer {
 	actionWorkflowYaml?: string;
 	privacyNotice?: string;
 	addedAt: string; // YYYY-MM-DD
-	popularityRank: number; // 1 = highest
 	enabled: boolean;
 	estimatedHeight?: number; // In pixels, to prevent CLS
 	voteCount: number;
@@ -48,4 +47,5 @@ export interface Visualizer {
 
 export type AppTheme = 'light' | 'dark' | 'system';
 
-export type SortOption = 'popularity' | 'most-voted' | 'most-stars' | 'alphabetical' | 'recently-added';
+export type SortOption = 'most-voted' | 'most-stars' | 'alphabetical' | 'recently-added';
+export type SortDirection = 'ascending' | 'descending';

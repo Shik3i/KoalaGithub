@@ -9,20 +9,27 @@
 				<KoalaLogo size={32} />
 				<span class="brand-title">KoalaGitHub</span>
 			</div>
-			<p class="tagline">The central hub for GitHub profile visualizers, stats, trophies, graphs & badges.</p>
+			<p class="tagline">
+				The central hub for GitHub profile visualizers, stats, trophies, graphs & badges.
+			</p>
 		</div>
 
 		<div class="footer-links">
 			<a href="/guide">Setup Guide 📖</a>
 			<a href="/about">About KoalaGitHub</a>
 			<a href="/privacy">Privacy Policy</a>
-			<a href="https://koalastuff.net/legal" target="_blank" rel="noreferrer">Legal Notice ↗</a>
+			<a href="https://koalastuff.net/legal" target="_blank" rel="noopener noreferrer"
+				>Legal Notice ↗</a
+			>
 		</div>
 	</div>
 
 	<div class="container footer-bottom">
-		<p class="privacy-badge">🔒 100% Static & Client-Side • No Cookies • No Tracking • Open Source</p>
-		<p class="copyright">© {new Date().getFullYear()} KoalaStuff Ecosystem. Part of koalastuff.net</p>
+		<p class="privacy-badge">🔒 No analytics • No ad tracking • Open source</p>
+		<p class="copyright">
+			<span class="version">Version {__APP_VERSION__}</span>
+			<span>© {new Date().getFullYear()} KoalaStuff Ecosystem</span>
+		</p>
 	</div>
 </footer>
 
@@ -98,6 +105,17 @@
 		color: var(--text-muted);
 	}
 
+	.copyright {
+		display: flex;
+		gap: 0.75rem;
+		align-items: center;
+	}
+
+	.version {
+		font-family: var(--font-mono);
+		color: var(--text-muted);
+	}
+
 	@media (max-width: 640px) {
 		.footer-content {
 			flex-direction: column;
@@ -113,6 +131,10 @@
 			flex-direction: column;
 			gap: 0.5rem;
 			align-items: flex-start;
+		}
+
+		.copyright {
+			flex-wrap: wrap;
 		}
 	}
 </style>

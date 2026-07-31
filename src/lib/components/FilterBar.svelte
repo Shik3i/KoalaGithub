@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { VisualizerCategory, SortOption } from '$lib/types/visualizer.types';
+	import type { VisualizerCategory, SortDirection, SortOption } from '$lib/types/visualizer.types';
 
 	let {
 		selectedCategory = $bindable<VisualizerCategory | 'all'>('all'),
 		searchQuery = $bindable(''),
 		selectedTag = $bindable<string | null>(null),
-		selectedSort = $bindable<SortOption>('popularity'),
+		selectedSort = $bindable<SortOption>('most-voted'),
+		sortDirection = $bindable<SortDirection>('descending'),
 		totalCount = 0,
 		availableTags = [] as string[]
 	} = $props<{
@@ -13,6 +14,7 @@
 		searchQuery?: string;
 		selectedTag?: string | null;
 		selectedSort?: SortOption;
+		sortDirection?: SortDirection;
 		totalCount?: number;
 		availableTags?: string[];
 	}>();
@@ -22,14 +24,21 @@
 		{ key: 'stats', label: 'Stats Cards', icon: '📊' },
 		{ key: 'streak', label: 'Streak', icon: '🔥' },
 		{ key: 'activity', label: 'Activity Graph', icon: '📈' },
-		{ key: 'configured', label: 'GitHub Actions (Self-Hosted)', icon: '⚙️' }
+		{ key: 'configured', label: 'Setup required', icon: '⚙️' }
 	];
+
+	const SORT_DESCRIPTIONS: Record<SortOption, [string, string]> = {
+		'most-voted': ['Fewest community votes first.', 'Most community votes first.'],
+		'most-stars': ['Fewest repository stars first.', 'Most repository stars first.'],
+		alphabetical: ['Visualizer names from A to Z.', 'Visualizer names from Z to A.'],
+		'recently-added': ['Oldest registry entries first.', 'Newest registry entries first.']
+	};
 </script>
 
 <div class="filter-bar-container">
 	<!-- Category Chips (Single Row, No Wrap) -->
 	<div class="category-chips" role="tablist" aria-label="Visualizer Categories">
-		{#each CATEGORIES as cat}
+		{#each CATEGORIES as cat (cat.key)}
 			<button
 				type="button"
 				role="tab"
@@ -47,7 +56,15 @@
 	<!-- Controls Row: Search Query & Sort -->
 	<div class="controls-row">
 		<div class="search-input-wrapper">
-			<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				class="search-icon"
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<circle cx="11" cy="11" r="8" />
 				<line x1="21" y1="21" x2="16.65" y2="16.65" />
 			</svg>
@@ -59,27 +76,61 @@
 				aria-label="Filter visualizers"
 			/>
 			{#if searchQuery}
-				<button type="button" class="clear-search" onclick={() => (searchQuery = '')}>✕</button>
+				<button
+					type="button"
+					class="clear-search"
+					onclick={() => (searchQuery = '')}
+					aria-label="Clear visualizer search">✕</button
+				>
 			{/if}
 		</div>
 
 		<div class="sort-wrapper">
 			<label for="sort-select" class="sort-label">Sort:</label>
 			<select id="sort-select" bind:value={selectedSort} class="sort-select">
-				<option value="popularity">Popularity</option>
-				<option value="most-voted">Most Voted ▲</option>
-				<option value="most-stars">Most Stars ⭐</option>
-				<option value="alphabetical">Alphabetical (A-Z)</option>
+				<option value="most-voted">Votes</option>
+				<option value="most-stars">Repository Stars</option>
+				<option value="alphabetical">Name</option>
 				<option value="recently-added">Recently Added</option>
 			</select>
+			<button
+				type="button"
+				class="direction-toggle"
+				onclick={() => (sortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending')}
+				aria-label={`Sort ${sortDirection === 'ascending' ? 'ascending' : 'descending'}`}
+				title={`Sort ${sortDirection === 'ascending' ? 'ascending' : 'descending'}; click to reverse`}
+			>
+				<svg
+					width="18"
+					height="18"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					{#if sortDirection === 'ascending'}
+						<path d="M12 19V5" />
+						<path d="m6 11 6-6 6 6" />
+					{:else}
+						<path d="M12 5v14" />
+						<path d="m18 13-6 6-6-6" />
+					{/if}
+				</svg>
+			</button>
 		</div>
 	</div>
+	<p class="sort-help" role="status">
+		{SORT_DESCRIPTIONS[selectedSort as SortOption][sortDirection === 'ascending' ? 0 : 1]}
+	</p>
 
 	<!-- Active Tags / Available Tag Chips -->
 	{#if availableTags.length > 0}
 		<div class="tags-container">
 			<span class="tags-label">Tags:</span>
-			{#each availableTags.slice(0, 10) as tag}
+			{#each availableTags.slice(0, 10) as tag (tag)}
 				<button
 					type="button"
 					class="tag-chip"
@@ -90,7 +141,9 @@
 				</button>
 			{/each}
 			{#if selectedTag}
-				<button type="button" class="clear-tag" onclick={() => (selectedTag = null)}>Clear tag filter</button>
+				<button type="button" class="clear-tag" onclick={() => (selectedTag = null)}
+					>Clear tag filter</button
+				>
 			{/if}
 		</div>
 	{/if}
@@ -145,9 +198,9 @@
 	}
 
 	.category-chip.active {
-		background-color: var(--brand-primary);
-		color: #ffffff;
-		border-color: var(--brand-primary);
+		background-color: var(--brand-solid);
+		color: var(--brand-on-solid);
+		border-color: var(--brand-solid);
 	}
 
 	.controls-row {
@@ -215,6 +268,28 @@
 		outline: none;
 	}
 
+	.direction-toggle {
+		display: inline-grid;
+		width: 2.35rem;
+		height: 2.35rem;
+		place-items: center;
+		flex: 0 0 auto;
+		border: 1px solid var(--border-color);
+		border-radius: var(--radius-md);
+		background: var(--bg-card);
+		color: var(--text-main);
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
+	}
+
+	.direction-toggle:hover {
+		background: var(--bg-card-hover);
+		border-color: var(--border-hover);
+		color: var(--brand-primary);
+	}
+
 	.tags-container {
 		display: flex;
 		flex-wrap: nowrap;
@@ -224,6 +299,12 @@
 		font-size: 0.8rem;
 		padding-bottom: 0.2rem;
 		scrollbar-width: none;
+	}
+
+	.sort-help {
+		margin-top: -0.35rem;
+		color: var(--text-subtle);
+		font-size: 0.75rem;
 	}
 
 	.tags-container::-webkit-scrollbar {
@@ -243,7 +324,8 @@
 		transition: all 0.15s ease;
 	}
 
-	.tag-chip:hover, .tag-chip.active {
+	.tag-chip:hover,
+	.tag-chip.active {
 		border-color: var(--brand-primary);
 		color: var(--brand-primary);
 		background-color: var(--brand-light);

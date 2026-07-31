@@ -6,7 +6,7 @@ build/
 dist/
 
 # Local SQLite Database & Data
-data/
+/data/
 *.db
 *.db-journal
 *.db-wal
@@ -23,6 +23,11 @@ node_modules/
 Thumbs.db
 .vscode/
 .idea/
+.agent/
+.agents/
+.claude/
+.codex/
+.cache/
 
 # Logs & Env
 *.log

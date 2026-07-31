@@ -12,6 +12,7 @@ type Visualizer struct {
 	Category              string            `json:"category"`
 	Tags                  []string          `json:"tags"`
 	PreviewType           string            `json:"previewType"`
+	ImageFormat           string            `json:"imageFormat"`
 	ImageURLTemplate      string            `json:"imageUrlTemplate"`
 	MarkdownTemplate      string            `json:"markdownTemplate"`
 	WebsiteURL            string            `json:"websiteUrl"`
@@ -24,7 +25,6 @@ type Visualizer struct {
 	ActionWorkflowYaml    string            `json:"actionWorkflowYaml,omitempty"`
 	PrivacyNotice         string            `json:"privacyNotice,omitempty"`
 	AddedAt               string            `json:"addedAt"`
-	PopularityRank        int               `json:"popularityRank"`
 	Enabled               bool              `json:"enabled"`
 	EstimatedHeight       int               `json:"estimatedHeight"`
 	VoteCount             int               `json:"voteCount"`
@@ -41,4 +41,8 @@ type VoteRequest struct {
 type VoteResponse struct {
 	Voted     bool `json:"voted"`
 	VoteCount int  `json:"voteCount"`
+}
+
+type DeleteVotesResponse struct {
+	Deleted int `json:"deleted"`
 }

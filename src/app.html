@@ -1,8 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.ico" sizes="any" />
+		<link
+			rel="icon"
+			href="%sveltekit.assets%/assets/brand/favicon-32.png"
+			type="image/png"
+			sizes="32x32"
+		/>
+		<link
+			rel="icon"
+			href="%sveltekit.assets%/assets/brand/favicon-16.png"
+			type="image/png"
+			sizes="16x16"
+		/>
+		<link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" sizes="180x180" />
+		<link rel="manifest" href="%sveltekit.assets%/site.webmanifest" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="referrer" content="no-referrer" />
 		<meta name="theme-color" content="#0f172a" />
@@ -10,76 +24,98 @@
 		<!-- Primary Meta Tags (SEO) -->
 		<title>KoalaGitHub – Central GitHub Profile Visualizer Hub</title>
 		<meta name="title" content="KoalaGitHub – Central GitHub Profile Visualizer Hub" />
-		<meta name="description" content="Discover, customize, and compare open-source GitHub profile README visualizers, streak stats, activity graphs, bonsai trees, and contribution games for any developer profile." />
-		<meta name="keywords" content="GitHub, profile visualizer, README stats, streak counter, contribution graph, bonsai tree, open source, developer portfolio, github-readme-stats, platane-snk, kodama" />
+		<meta
+			name="description"
+			content="Discover, customize, and compare open-source GitHub profile README visualizers, streak stats, activity graphs, bonsai trees, and contribution games for any developer profile."
+		/>
+		<meta
+			name="keywords"
+			content="GitHub, profile visualizer, README stats, streak counter, contribution graph, bonsai tree, open source, developer portfolio, github-readme-stats, platane-snk, kodama"
+		/>
 		<meta name="author" content="KoalaStuff" />
 		<meta name="robots" content="index, follow" />
-		<link rel="canonical" href="https://github.koalastuff.net/" />
 
 		<!-- Open Graph / Facebook (SEO / GEO) -->
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://github.koalastuff.net/" />
 		<meta property="og:title" content="KoalaGitHub – Central GitHub Profile Visualizer Hub" />
-		<meta property="og:description" content="One-stop open-source hub for GitHub profile README visualizers, contribution graphs, streak stats, and bonsai trees. Instant live preview & 1-click Markdown copy." />
+		<meta
+			property="og:description"
+			content="One-stop open-source hub for GitHub profile README visualizers, contribution graphs, streak stats, and bonsai trees. Instant live preview & 1-click Markdown copy."
+		/>
 		<meta property="og:site_name" content="KoalaGitHub" />
+		<meta property="og:image" content="https://github.koalastuff.net/assets/brand/og-image.png" />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta
+			property="og:image:alt"
+			content="KoalaGitHub mascot holding a contribution activity graph"
+		/>
 
 		<!-- Twitter Meta Tags -->
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:url" content="https://github.koalastuff.net/" />
 		<meta name="twitter:title" content="KoalaGitHub – Central GitHub Profile Visualizer Hub" />
-		<meta name="twitter:description" content="Discover and compare open-source GitHub profile visualizers, streak counters, and contribution games." />
+		<meta
+			name="twitter:description"
+			content="Discover and compare open-source GitHub profile visualizers, streak counters, and contribution games."
+		/>
+		<meta name="twitter:image" content="https://github.koalastuff.net/assets/brand/og-image.png" />
+		<meta
+			name="twitter:image:alt"
+			content="KoalaGitHub mascot holding a contribution activity graph"
+		/>
 
 		<!-- Structured Data (JSON-LD) for AEO & GEO (AI Search / Answer Engines) -->
 		<script type="application/ld+json">
-		{
-			"@context": "https://schema.org",
-			"@graph": [
-				{
-					"@type": "WebApplication",
-					"@id": "https://github.koalastuff.net/#webapp",
-					"url": "https://github.koalastuff.net/",
-					"name": "KoalaGitHub",
-					"applicationCategory": "DeveloperApplication",
-					"operatingSystem": "All",
-					"description": "Central hub for discovering, previewing, and comparing open-source GitHub profile README visualizers, streak counters, contribution graphs, and bonsai trees.",
-					"offers": {
-						"@type": "Offer",
-						"price": "0",
-						"priceCurrency": "USD"
-					}
-				},
-				{
-					"@type": "FAQPage",
-					"@id": "https://github.koalastuff.net/#faq",
-					"mainEntity": [
-						{
-							"@type": "Question",
-							"name": "What is KoalaGitHub?",
-							"acceptedAnswer": {
-								"@type": "Answer",
-								"text": "KoalaGitHub is an open-source, privacy-first web application hosted at github.koalastuff.net that aggregates all verified open-source GitHub profile visualizers, streak stats, activity graphs, and bonsai trees in one central place."
-							}
-						},
-						{
-							"@type": "Question",
-							"name": "How do I add a visualizer to my GitHub profile README?",
-							"acceptedAnswer": {
-								"@type": "Answer",
-								"text": "Enter your GitHub username at github.koalastuff.net, customize your theme, copy the 1-click Markdown snippet, and paste it directly into your GitHub profile README.md file."
-							}
-						},
-						{
-							"@type": "Question",
-							"name": "Are all visualizers on KoalaGitHub open source?",
-							"acceptedAnswer": {
-								"@type": "Answer",
-								"text": "Yes, every visualizer listed on KoalaGitHub includes a direct Repo link to its open-source GitHub repository."
-							}
+			{
+				"@context": "https://schema.org",
+				"@graph": [
+					{
+						"@type": "WebApplication",
+						"@id": "https://github.koalastuff.net/#webapp",
+						"url": "https://github.koalastuff.net/",
+						"name": "KoalaGitHub",
+						"applicationCategory": "DeveloperApplication",
+						"operatingSystem": "All",
+						"description": "Central hub for discovering, previewing, and comparing open-source GitHub profile README visualizers, streak counters, contribution graphs, and bonsai trees.",
+						"offers": {
+							"@type": "Offer",
+							"price": "0",
+							"priceCurrency": "USD"
 						}
-					]
-				}
-			]
-		}
+					},
+					{
+						"@type": "FAQPage",
+						"@id": "https://github.koalastuff.net/#faq",
+						"mainEntity": [
+							{
+								"@type": "Question",
+								"name": "What is KoalaGitHub?",
+								"acceptedAnswer": {
+									"@type": "Answer",
+									"text": "KoalaGitHub is an open-source web application that catalogs GitHub profile visualizers, streak stats, activity graphs, and contribution artwork in one central place."
+								}
+							},
+							{
+								"@type": "Question",
+								"name": "How do I add a visualizer to my GitHub profile README?",
+								"acceptedAnswer": {
+									"@type": "Answer",
+									"text": "Enter your GitHub username at github.koalastuff.net, customize your theme, copy the 1-click Markdown snippet, and paste it directly into your GitHub profile README.md file."
+								}
+							},
+							{
+								"@type": "Question",
+								"name": "Do KoalaGitHub entries link to source code?",
+								"acceptedAnswer": {
+									"@type": "Answer",
+									"text": "Each listed entry includes a direct link to its source repository so visitors can inspect its implementation and setup instructions."
+								}
+							}
+						]
+					}
+				]
+			}
 		</script>
 
 		%sveltekit.head%

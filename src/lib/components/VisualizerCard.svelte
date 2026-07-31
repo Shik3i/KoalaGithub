@@ -9,6 +9,7 @@
 	}>();
 
 	let selectedTheme = $state('');
+	let previewImage = $state<HTMLImageElement>();
 	$effect(() => {
 		if (!selectedTheme) {
 			selectedTheme = visualizer.defaultTheme;
@@ -20,36 +21,69 @@
 	let copied = $state(false);
 	let copiedYaml = $state(false);
 	let voting = $state(false);
+	let actionStatus = $state('');
+	let actionFailed = $state(false);
 
 	// Derived image URL & Markdown snippet
 	let imageUrl = $derived(renderTemplate(visualizer.imageUrlTemplate, username, selectedTheme));
 	let markdownCode = $derived(renderTemplate(visualizer.markdownTemplate, username, selectedTheme));
+	let isReferenceProfile = $derived(username.toLowerCase() === 'shik3i');
 
 	// Reset image state when theme or username or reloadKey changes
 	$effect(() => {
 		// track dependencies
-		imageUrl;
-		reloadKey;
+		void imageUrl;
+		void reloadKey;
 		imageState = 'loading';
 	});
 
-	function handleCopy() {
-		if (typeof navigator !== 'undefined' && navigator.clipboard) {
-			navigator.clipboard.writeText(markdownCode);
-			copied = true;
+	$effect(() => {
+		const image = previewImage;
+		if (!image) return;
+
+		const handleLoad = () => (imageState = 'loaded');
+		const handleError = () => (imageState = 'error');
+		image.addEventListener('load', handleLoad);
+		image.addEventListener('error', handleError);
+
+		if (image.complete) {
+			imageState = image.naturalWidth > 0 ? 'loaded' : 'error';
+		}
+
+		return () => {
+			image.removeEventListener('load', handleLoad);
+			image.removeEventListener('error', handleError);
+		};
+	});
+
+	async function copyText(value: string, kind: 'markdown' | 'workflow') {
+		try {
+			if (typeof navigator === 'undefined' || !navigator.clipboard) {
+				throw new Error('Clipboard unavailable');
+			}
+			await navigator.clipboard.writeText(value);
+			actionFailed = false;
+			actionStatus = `${kind === 'workflow' ? 'Workflow' : 'Markdown'} copied to clipboard.`;
+			if (kind === 'workflow') copiedYaml = true;
+			else copied = true;
 			setTimeout(() => {
 				copied = false;
+				copiedYaml = false;
+				actionStatus = '';
 			}, 2000);
+		} catch {
+			actionFailed = true;
+			actionStatus = 'Clipboard access failed. Select and copy the code manually.';
 		}
 	}
 
+	function handleCopy() {
+		void copyText(markdownCode, 'markdown');
+	}
+
 	function handleCopyYaml() {
-		if (visualizer.actionWorkflowYaml && typeof navigator !== 'undefined' && navigator.clipboard) {
-			navigator.clipboard.writeText(visualizer.actionWorkflowYaml);
-			copiedYaml = true;
-			setTimeout(() => {
-				copiedYaml = false;
-			}, 2000);
+		if (visualizer.actionWorkflowYaml) {
+			void copyText(visualizer.actionWorkflowYaml, 'workflow');
 		}
 	}
 
@@ -74,6 +108,12 @@
 		if (voting) return;
 		voting = true;
 		const deviceId = getOrCreateDeviceId();
+		if (!deviceId) {
+			actionFailed = true;
+			actionStatus = 'Voting requires functional browser storage and secure random values.';
+			voting = false;
+			return;
+		}
 
 		try {
 			const res = await fetch(`/api/visualizers/${visualizer.id}/vote`, {
@@ -81,13 +121,23 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ deviceId })
 			});
-			if (res.ok) {
-				const data = await res.json();
-				visualizer.userVoted = data.voted;
-				visualizer.voteCount = data.voteCount;
+			if (!res.ok) throw new Error(`HTTP ${res.status}`);
+			const data: unknown = await res.json();
+			if (
+				!data ||
+				typeof data !== 'object' ||
+				typeof (data as { voted?: unknown }).voted !== 'boolean' ||
+				typeof (data as { voteCount?: unknown }).voteCount !== 'number'
+			) {
+				throw new Error('Invalid response');
 			}
-		} catch (e) {
-			console.error('Failed to register vote:', e);
+			visualizer.userVoted = (data as { voted: boolean }).voted;
+			visualizer.voteCount = (data as { voteCount: number }).voteCount;
+			actionFailed = false;
+			actionStatus = visualizer.userVoted ? 'Vote added.' : 'Vote removed.';
+		} catch {
+			actionFailed = true;
+			actionStatus = 'Vote could not be saved. Please try again.';
 		} finally {
 			voting = false;
 		}
@@ -98,16 +148,18 @@
 	<!-- Card Header -->
 	<div class="card-header">
 		<div class="header-main">
-			<h3 class="card-title">{visualizer.name}</h3>
+			<h2 class="card-title">{visualizer.name}</h2>
 			<div class="badge-row">
 				<span class="category-badge">{visualizer.category}</span>
 				<button
 					type="button"
-					class="reddit-upvote-btn"
+					class="vote-btn"
 					class:voted={visualizer.userVoted}
 					onclick={handleVote}
 					disabled={voting}
 					title={visualizer.userVoted ? 'Remove your upvote' : 'Upvote this visualizer'}
+					aria-label={`${visualizer.userVoted ? 'Remove vote from' : 'Vote for'} ${visualizer.name}; ${visualizer.voteCount} votes`}
+					aria-pressed={visualizer.userVoted}
 				>
 					<svg class="upvote-arrow" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M12 4L3 15h6v5h6v-5h6L12 4z" />
@@ -120,32 +172,19 @@
 			<a
 				href={visualizer.repositoryUrl}
 				target="_blank"
-				rel="noreferrer"
+				rel="noopener noreferrer"
 				class="repo-link"
 				title="View Open-Source GitHub Repository"
 			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 					<path
-						d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+						d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.3c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"
 					/>
 				</svg>
 				<span>Repo</span>
 				{#if visualizer.githubStars && visualizer.githubStars > 0}
 					<span class="star-count">⭐ {formatStars(visualizer.githubStars)}</span>
 				{/if}
-			</a>
-			<a
-				href={visualizer.websiteUrl}
-				target="_blank"
-				rel="noreferrer"
-				class="link-icon"
-				title="Visit Original Site"
-			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-					<polyline points="15 3 21 3 21 9" />
-					<line x1="10" y1="14" x2="21" y2="3" />
-				</svg>
 			</a>
 		</div>
 	</div>
@@ -156,7 +195,7 @@
 	<!-- Subtle Tags -->
 	{#if visualizer.tags && visualizer.tags.length > 0}
 		<div class="card-tags">
-			{#each visualizer.tags as tag}
+			{#each visualizer.tags as tag (tag)}
 				<span class="card-tag-chip">#{tag}</span>
 			{/each}
 		</div>
@@ -167,7 +206,7 @@
 		<div class="themes-row">
 			<span class="themes-label">Theme:</span>
 			<div class="theme-buttons">
-				{#each visualizer.themes as t}
+				{#each visualizer.themes as t (t.key)}
 					<button
 						type="button"
 						class="theme-chip"
@@ -188,13 +227,13 @@
 			<div class="setup-notice">
 				<div class="setup-header">
 					<span class="setup-icon">⚙️</span>
-					<h4>External Setup Required</h4>
+					<h3>External Setup Required</h3>
 				</div>
 				<p class="setup-text">{visualizer.setupExplanation}</p>
 				{#if visualizer.privacyNotice}
 					<p class="setup-privacy">{visualizer.privacyNotice}</p>
 				{/if}
-				<a href={visualizer.websiteUrl} target="_blank" rel="noreferrer" class="setup-btn">
+				<a href={visualizer.websiteUrl} target="_blank" rel="noopener noreferrer" class="setup-btn">
 					View Setup Guide & Documentation ↗
 				</a>
 			</div>
@@ -220,19 +259,35 @@
 				<div class="error-box" style="min-height: {visualizer.estimatedHeight || 170}px;">
 					<span class="error-icon">⚙️</span>
 					{#if visualizer.requiresExternalSetup}
-						<p class="error-text">GitHub Action workflow required to generate SVG output for <strong>{username}</strong>.</p>
-						{#if visualizer.setupExplanation}
+						<p class="error-text">
+							{#if isReferenceProfile}
+								The scheduled Shik3i profile build has not published this preview yet.
+							{:else}
+								This visualizer requires a workflow in <strong>{username}/{username}</strong>.
+							{/if}
+						</p>
+						{#if visualizer.setupExplanation && !isReferenceProfile}
 							<p class="setup-privacy">{visualizer.setupExplanation}</p>
 						{/if}
 						<div class="error-actions">
-							<a href={visualizer.websiteUrl} target="_blank" rel="noreferrer" class="retry-btn">View Setup Guide ↗</a>
+							<a
+								href={isReferenceProfile
+									? 'https://github.com/Shik3i/Shik3i/actions/workflows/visualizers.yml'
+									: visualizer.websiteUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="retry-btn"
+								>{isReferenceProfile ? 'View Build Status ↗' : 'View Setup Guide ↗'}</a
+							>
 							<button type="button" class="open-direct-btn" onclick={handleRetry}>Retry</button>
 						</div>
 					{:else}
 						<p class="error-text">Failed to load preview image from third-party provider.</p>
 						<div class="error-actions">
 							<button type="button" class="retry-btn" onclick={handleRetry}>Retry</button>
-							<a href={imageUrl} target="_blank" rel="noreferrer" class="open-direct-btn">Open Image Direct ↗</a>
+							<a href={imageUrl} target="_blank" rel="noopener noreferrer" class="open-direct-btn"
+								>Open Image Direct ↗</a
+							>
 						</div>
 					{/if}
 				</div>
@@ -240,14 +295,15 @@
 
 			{#key `${imageUrl}-${reloadKey}`}
 				<img
+					bind:this={previewImage}
 					src={imageUrl}
 					alt="{visualizer.name} preview for {username}"
+					width="960"
+					height={visualizer.estimatedHeight || 170}
 					loading="lazy"
 					referrerpolicy="no-referrer"
 					class="preview-img"
 					class:hidden={imageState === 'error'}
-					onload={() => (imageState = 'loaded')}
-					onerror={() => (imageState = 'error')}
 				/>
 			{/key}
 		{/if}
@@ -255,38 +311,58 @@
 
 	<!-- Code Preview & Markdown Copy Section -->
 	<div class="code-section">
-		<div class="code-header">
-			<span class="code-label">README Markdown Code:</span>
-			<div class="code-actions">
-				{#if visualizer.actionWorkflowYaml}
+		{#if visualizer.actionWorkflowYaml}
+			<div class="workflow-prerequisite">
+				Generate this asset in your own profile repository first.
+				<a href="/guide#generated-visualizers">Read the workflow setup guide →</a>
+			</div>
+			<div class="code-header">
+				<span class="code-label">GitHub Actions workflow:</span>
+				<div class="code-actions">
 					<button type="button" class="copy-btn copy-yaml-btn" onclick={handleCopyYaml}>
 						{#if copiedYaml}
-							<span class="copied-indicator">✓ YAML Copied!</span>
+							<span class="copied-indicator">Workflow copied</span>
 						{:else}
-							<span>📋 Copy Workflow (.yml)</span>
+							<span>Copy workflow (.yml)</span>
 						{/if}
 					</button>
-				{/if}
-				<button type="button" class="copy-btn" onclick={handleCopy}>
-					{#if copied}
-						<span class="copied-indicator">✓ Copied!</span>
-					{:else}
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-						</svg>
-						<span>Copy Markdown</span>
-					{/if}
-				</button>
+				</div>
 			</div>
-		</div>
-		<pre class="code-block"><code>{markdownCode}</code></pre>
-
-		{#if visualizer.actionWorkflowYaml}
 			<details class="workflow-details">
-				<summary class="workflow-summary">⚙️ View GitHub Action Workflow (.github/workflows/*.yml)</summary>
+				<summary class="workflow-summary"
+					>View GitHub Action workflow (.github/workflows/*.yml)</summary
+				>
 				<pre class="code-block yaml-block"><code>{visualizer.actionWorkflowYaml}</code></pre>
 			</details>
+		{:else}
+			<div class="code-header">
+				<span class="code-label">README Markdown Code:</span>
+				<div class="code-actions">
+					<button type="button" class="copy-btn" onclick={handleCopy}>
+						{#if copied}
+							<span class="copied-indicator">Markdown copied</span>
+						{:else}
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								aria-hidden="true"
+							>
+								<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+								<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+							</svg>
+							<span>Copy Markdown</span>
+						{/if}
+					</button>
+				</div>
+			</div>
+			<pre class="code-block"><code>{markdownCode}</code></pre>
+		{/if}
+		{#if actionStatus}
+			<p class:error={actionFailed} class="action-status" role="status">{actionStatus}</p>
 		{/if}
 	</div>
 </article>
@@ -301,7 +377,9 @@
 		flex-direction: column;
 		gap: 0.85rem;
 		box-shadow: var(--shadow-sm);
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
 	}
 
 	.card:hover {
@@ -347,7 +425,7 @@
 		border-radius: var(--radius-sm);
 	}
 
-	.reddit-upvote-btn {
+	.vote-btn {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
@@ -364,33 +442,35 @@
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 	}
 
-	.reddit-upvote-btn .upvote-arrow {
-		transition: transform 0.15s ease, color 0.15s ease;
+	.vote-btn .upvote-arrow {
+		transition:
+			transform 0.15s ease,
+			color 0.15s ease;
 	}
 
-	.reddit-upvote-btn:hover {
-		border-color: #ff4500;
-		color: #ff4500;
-		background-color: rgba(255, 69, 0, 0.08);
+	.vote-btn:hover {
+		border-color: var(--brand-primary);
+		color: var(--brand-primary);
+		background-color: color-mix(in srgb, var(--brand-primary) 9%, transparent);
 	}
 
-	.reddit-upvote-btn:hover .upvote-arrow {
+	.vote-btn:hover .upvote-arrow {
 		transform: translateY(-2px);
 	}
 
-	.reddit-upvote-btn.voted {
-		background: linear-gradient(135deg, #ff4500 0%, #ff5722 100%);
-		color: #ffffff;
-		border-color: #ff4500;
-		box-shadow: 0 2px 8px rgba(255, 69, 0, 0.35);
+	.vote-btn.voted {
+		background: linear-gradient(135deg, var(--brand-solid) 0%, #0d9488 100%);
+		color: var(--brand-on-solid);
+		border-color: var(--brand-primary);
+		box-shadow: 0 2px 8px color-mix(in srgb, var(--brand-primary) 35%, transparent);
 	}
 
-	.reddit-upvote-btn.voted .upvote-arrow {
+	.vote-btn.voted .upvote-arrow {
 		color: #ffffff;
 		transform: translateY(-1px);
 	}
 
-	.reddit-upvote-btn:active {
+	.vote-btn:active {
 		transform: scale(0.94);
 	}
 
@@ -430,18 +510,6 @@
 		border-color: var(--brand-primary);
 	}
 
-	.link-icon {
-		color: var(--text-muted);
-		padding: 4px;
-		border-radius: var(--radius-sm);
-		transition: color 0.15s ease, background-color 0.15s ease;
-	}
-
-	.link-icon:hover {
-		color: var(--text-main);
-		background-color: var(--bg-subtle);
-	}
-
 	.card-desc {
 		font-size: 0.875rem;
 		color: var(--text-muted);
@@ -466,7 +534,10 @@
 		border-radius: var(--radius-sm);
 		letter-spacing: -0.01em;
 		opacity: 0.85;
-		transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+		transition:
+			opacity 0.15s ease,
+			color 0.15s ease,
+			border-color 0.15s ease;
 	}
 
 	.card-tag-chip:hover {
@@ -505,10 +576,11 @@
 		transition: all 0.15s ease;
 	}
 
-	.theme-chip:hover, .theme-chip.active {
-		background-color: var(--brand-primary);
-		color: #ffffff;
-		border-color: var(--brand-primary);
+	.theme-chip:hover,
+	.theme-chip.active {
+		background-color: var(--brand-solid);
+		color: var(--brand-on-solid);
+		border-color: var(--brand-solid);
 	}
 
 	.preview-box {
@@ -560,7 +632,9 @@
 	}
 
 	@keyframes spin {
-		to { transform: rotate(360deg); }
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.error-box {
@@ -592,7 +666,8 @@
 		margin-top: 0.25rem;
 	}
 
-	.retry-btn, .open-direct-btn {
+	.retry-btn,
+	.open-direct-btn {
 		font-size: 0.775rem;
 		font-weight: 600;
 		padding: 0.3rem 0.65rem;
@@ -610,7 +685,8 @@
 		border: 1px solid var(--error-border);
 	}
 
-	.setup-notice, .opt-in-box {
+	.setup-notice,
+	.opt-in-box {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -627,7 +703,7 @@
 		gap: 0.4rem;
 	}
 
-	.setup-header h4 {
+	.setup-header h3 {
 		font-size: 0.95rem;
 		font-weight: 700;
 		color: var(--text-main);
@@ -640,26 +716,29 @@
 		max-width: 500px;
 	}
 
-	.setup-privacy, .counter-notice {
+	.setup-privacy,
+	.counter-notice {
 		font-size: 0.775rem;
 		color: var(--text-subtle);
 		font-style: italic;
 	}
 
-	.setup-btn, .opt-in-btn {
+	.setup-btn,
+	.opt-in-btn {
 		margin-top: 0.4rem;
 		font-size: 0.825rem;
 		font-weight: 700;
 		padding: 0.45rem 0.85rem;
 		border-radius: var(--radius-md);
-		background-color: var(--brand-primary);
-		color: #ffffff;
+		background-color: var(--brand-solid);
+		color: var(--brand-on-solid);
 		transition: background-color 0.15s ease;
 	}
 
-	.setup-btn:hover, .opt-in-btn:hover {
-		background-color: var(--brand-hover);
-		color: #ffffff;
+	.setup-btn:hover,
+	.opt-in-btn:hover {
+		background-color: var(--brand-solid-hover);
+		color: var(--brand-on-solid);
 	}
 
 	.code-section {
@@ -708,15 +787,30 @@
 		transition: all 0.15s ease;
 	}
 
+	.workflow-prerequisite {
+		padding: 0.55rem 0.7rem;
+		border-left: 3px solid var(--warning-text);
+		background: color-mix(in srgb, var(--warning-bg) 75%, transparent);
+		color: var(--text-main);
+		font-size: 0.8rem;
+		line-height: 1.45;
+	}
+
+	.workflow-prerequisite a {
+		font-weight: 700;
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
 	.copy-yaml-btn {
-		background-color: rgba(99, 102, 241, 0.12);
-		color: #818cf8;
-		border-color: rgba(99, 102, 241, 0.3);
+		background-color: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+		color: var(--brand-primary);
+		border-color: color-mix(in srgb, var(--brand-primary) 30%, transparent);
 	}
 
 	.copy-yaml-btn:hover {
-		background-color: rgba(99, 102, 241, 0.22);
-		color: #a5b4fc;
+		background-color: color-mix(in srgb, var(--brand-primary) 22%, transparent);
+		color: var(--brand-hover);
 	}
 
 	.workflow-details {
@@ -753,6 +847,15 @@
 	.copied-indicator {
 		color: #4ade80;
 		font-weight: 700;
+	}
+
+	.action-status {
+		font-size: 0.75rem;
+		color: #4ade80;
+	}
+
+	.action-status.error {
+		color: #fca5a5;
 	}
 
 	.code-block {

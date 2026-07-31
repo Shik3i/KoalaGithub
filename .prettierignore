@@ -1,0 +1,6 @@
+.cache
+.svelte-kit
+data
+node_modules
+scratch
+www

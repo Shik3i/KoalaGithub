@@ -61,7 +61,24 @@ describe('Visualizer Registry Data Integrity', () => {
 			if (item.requiresExternalSetup) {
 				expect(item.setupExplanation).toBeDefined();
 				expect(item.setupExplanation!.length).toBeGreaterThan(10);
+				expect(item.actionWorkflowYaml).toBeDefined();
+				for (const line of item.actionWorkflowYaml!.split('\n')) {
+					if (line.includes('uses:')) {
+						expect(line, `Action must be pinned to a commit SHA: ${line}`).toMatch(
+							/^\s*-\s+uses:\s+[^@]+@[0-9a-f]{40}\s*$/
+						);
+					}
+				}
 			}
 		}
+	});
+
+	it('keeps the two snake generators separate', () => {
+		const platane = VISUALIZERS.find((item) => item.id === 'platane-contribution-snake');
+		const snakeAndCommits = VISUALIZERS.find((item) => item.id === 'dahan8473-snake-and-commits');
+		expect(platane?.repositoryUrl).toBe('https://github.com/Platane/snk');
+		expect(platane?.imageUrlTemplate).toContain('/output/github-snake.svg');
+		expect(snakeAndCommits?.repositoryUrl).toBe('https://github.com/dahan8473/snake-and-commits');
+		expect(snakeAndCommits?.imageUrlTemplate).toContain('/output/snake.svg');
 	});
 });

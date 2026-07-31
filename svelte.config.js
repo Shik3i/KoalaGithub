@@ -8,8 +8,8 @@ const config = {
 		adapter: adapter({
 			pages: 'www',
 			assets: 'www',
-			fallback: undefined,
-			precompress: false,
+			fallback: '404.html',
+			precompress: true,
 			strict: true
 		})
 	}

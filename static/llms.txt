@@ -1,29 +1,33 @@
-# KoalaGitHub (github.koalastuff.net)
+# KoalaGitHub
 
-> KoalaGitHub is an open-source, privacy-first web application that aggregates, previews, and compares GitHub profile README visualizers, contribution graphs, streak stats, and bonsai trees.
+KoalaGitHub is an open-source directory for previewing and comparing GitHub profile README visualizers. It serves a prerendered SvelteKit interface and a small Go API.
 
-## Core Features
-- Live interactive previews for any GitHub username (default: Shik3i)
-- Direct open-source repository link for every visualizer
-- Customizable themes (Dark, Light, Tokyo Night, Dracula, Cyberpunk, etc.)
-- 1-click Markdown code copy snippets for profile READMEs
-- Anonymous device-based upvoting system
-- Zero analytics, zero cookies, 100% open source
+## User features
 
-## Supported Visualizer Categories & Projects
-- **Kodama Bonsai Tree**: Draws contribution history as a growing SVG bonsai tree (https://github.com/orijitghosh/kodama).
-- **Contribution Grid Snake**: Snake animation eating contribution dots (https://github.com/Platane/snk).
-- **GitHub Readme Streak Stats**: Displays total contributions, current streak, and longest streak (https://github.com/denvercoder1/github-readme-streak-stats).
-- **GitHub Readme Activity Graph**: Contribution trend line graph (https://github.com/ashutosh00710/github-readme-activity-graph).
-- **Arcade Pac-Man Graph**: Arcade Pac-Man & Breakout contribution graph (https://github.com/abozanona/pacman-contribution-graph).
-- **GitHub Breakout Animation**: Bouncing Breakout game board (https://github.com/cyprieng/github-breakout).
-- **Contribution Crawl**: 16-bit retro dungeon crawler (https://github.com/MaskiCoding/Contribution-Crawl).
-- **3D Isometric Calendar**: Daily updated 3D contribution calendar (https://github.com/yoshi389111/github-profile-3d-contrib).
-- **Profile Summary Cards**: Comprehensive overview & productive time cards (https://github.com/vn7n24fzkq/github-profile-summary-cards).
-- **Capsule Render Headers**: SVG wave headers (https://github.com/kylelobo/The-Documentation-Compendium).
-- **Profile Views Counter**: Dynamic visitor counter badge (https://github.com/antonkomarev/github-profile-views-counter).
+- Preview supported third-party visualizers for a supplied GitHub username.
+- Copy README Markdown and reviewed GitHub Actions workflow examples.
+- Sort by KoalaGitHub votes, source-repository stars, name, or date added.
+- No accounts, analytics, advertising trackers, or tracking cookies.
+- Pseudonymous device-based votes can be deleted from the Privacy page.
 
-## REST API Reference
-- `GET https://github.koalastuff.net/api/visualizers` : Returns JSON list of all visualizers with vote counts.
-- `GET https://github.koalastuff.net/api/health` : Server health status.
-- `POST https://github.koalastuff.net/api/visualizers/{id}/vote` : Toggles upvote for a visualizer using a client UUID.
+## Current registry
+
+- Kodama bonsai tree: https://github.com/orijitghosh/kodama
+- Snake and Commits: https://github.com/dahan8473/snake-and-commits
+- Platane contribution snake: https://github.com/Platane/snk
+- GitHub Readme Streak Stats: https://github.com/denvercoder1/github-readme-streak-stats
+- GitHub Readme Activity Graph: https://github.com/ashutosh00710/github-readme-activity-graph
+- Pac-Man Contribution Graph: https://github.com/abozanona/pacman-contribution-graph
+- Contribution Breakout: https://github.com/cyprieng/github-breakout
+- Contribution Crawl: https://github.com/MaskiCoding/Contribution-Crawl
+- 3D contribution calendar: https://github.com/yoshi389111/github-profile-3d-contrib
+- GitHub Profile Summary Cards: https://github.com/vn7n24fzkq/github-profile-summary-cards
+
+## API
+
+- `GET /api/health`: service and database health plus build version.
+- `GET /api/visualizers`: registry, votes, and repository-star data. An optional UUID v4 is sent in the `X-Device-ID` header to include the current device's vote state.
+- `POST /api/visualizers/{id}/vote`: toggle a vote with JSON body `{"deviceId":"<UUID v4>"}`.
+- `DELETE /api/votes`: delete all votes for the UUID v4 supplied in `X-Device-ID`.
+
+Third-party preview requests are made directly by the visitor's browser. See `/privacy` for data-processing details and `/guide` for profile README and workflow setup.

@@ -1,10 +1,17 @@
 # Docker build ignore
 .git
+.github
 .gitignore
+.agent
+.agents
+.claude
+.codex
 node_modules
 .svelte-kit
 www
 data
+scratch
+.cache
 *.db
 *.exe
 *.log

@@ -1,41 +1,87 @@
 <svelte:head>
 	<title>About KoalaGitHub – Central GitHub Profile Visualizer Hub</title>
+	<link rel="canonical" href="https://github.koalastuff.net/about" />
+	<meta property="og:url" content="https://github.koalastuff.net/about" />
 </svelte:head>
 
 <div class="container page-container">
 	<header class="page-header">
 		<h1>About KoalaGitHub</h1>
-		<p class="lead">Centralized, open-source repository for GitHub profile stats, graphs, trophies & badges.</p>
+		<p class="lead">
+			Centralized, open-source directory for GitHub profile stats, graphs, trophies, and badges.
+		</p>
 	</header>
 
 	<div class="content-card">
 		<h2>What is KoalaGitHub?</h2>
 		<p>
-			<strong>KoalaGitHub</strong> (`github.koalastuff.net`) solves a common problem developers face when designing their GitHub profile README: instead of hunting through dozens of separate websites and repositories to test different stats cards, streak graphs, activity charts, and trophies, KoalaGitHub brings them together on a single, responsive comparison dashboard.
+			<strong>KoalaGitHub</strong> (<code>github.koalastuff.net</code>) solves a common problem
+			developers face when designing their GitHub profile README: instead of hunting through dozens
+			of separate websites and repositories to test different stats cards, streak graphs, activity
+			charts, and trophies, KoalaGitHub brings them together on a single, responsive comparison
+			dashboard.
 		</p>
 
 		<h2>Core Principles</h2>
 		<ul class="features-list">
-			<li>⚡ <strong>100% Static & Fast</strong>: Built with SvelteKit static prerendering. Everything runs directly inside your web browser.</li>
-			<li>🔒 <strong>Privacy First</strong>: Zero analytics, zero ad trackers, zero cookies, zero user databases.</li>
-			<li>🔗 <strong>Shareable Custom URLs</strong>: Share your customized view instantly using `?user=yourusername`.</li>
-			<li>🛠️ <strong>1-Click Markdown Copy</strong>: Pick your favorite theme variant and copy ready-to-use Markdown snippet directly into your `README.md`.</li>
+			<li>
+				⚡ <strong>Fast UI</strong>: SvelteKit prerenders the interface; a small Go API provides
+				live stars and pseudonymous votes.
+			</li>
+			<li>
+				🔒 <strong>Privacy Focused</strong>: No analytics, ad trackers, accounts, or tracking
+				cookies.
+			</li>
+			<li>
+				🔗 <strong>Shareable Custom URLs</strong>: Share your customized view using
+				<code>?user=yourusername</code>.
+			</li>
+			<li>
+				🛠️ <strong>One-click Markdown copy</strong>: Pick a theme and copy a ready-to-use snippet
+				into your <code>README.md</code>.
+			</li>
 		</ul>
 
 		<h2>How to Contribute a New Visualizer</h2>
 		<p>
-			Adding a new verified visualizer to KoalaGitHub is easy! All visualizers are maintained in a single TypeScript registry file (`src/lib/data/visualizers.ts`).
+			Visualizer metadata is maintained in the central JSON registry <code
+				>src/lib/data/visualizers.json</code
+			>.
 		</p>
 		<ol class="steps-list">
-			<li>Fork the repository on GitHub: <a href="https://github.com/Shik3i/KoalaGithub" target="_blank" rel="noreferrer">github.com/Shik3i/KoalaGithub</a></li>
-			<li>Add your visualizer definition to <code>src/lib/data/visualizers.ts</code>.</li>
-			<li>Run <code>npm test</code> to run data integrity checks.</li>
+			<li>
+				Fork the repository on GitHub: <a
+					href="https://github.com/Shik3i/KoalaGithub"
+					target="_blank"
+					rel="noopener noreferrer">github.com/Shik3i/KoalaGithub</a
+				>
+			</li>
+			<li>Add your visualizer definition to <code>src/lib/data/visualizers.json</code>.</li>
+			<li>Run <code>npm run test</code> to run data integrity checks.</li>
 			<li>Submit a Pull Request!</li>
 		</ol>
 
+		<h2>How sorting works</h2>
+		<ul class="features-list">
+			<li><strong>Most Voted</strong> uses only votes recorded by KoalaGitHub.</li>
+			<li>
+				<strong>Most Stars</strong> uses only the current star count of each source repository.
+			</li>
+			<li><strong>Alphabetical</strong> sorts by visualizer name.</li>
+			<li><strong>Recently Added</strong> sorts by the registry's addition date.</li>
+		</ul>
+		<p>Votes and repository stars are never combined into a weighted score.</p>
+
 		<div class="eco-note">
 			<h3>Part of the KoalaStuff Ecosystem</h3>
-			<p>KoalaGitHub is part of the open-source KoalaStuff project suite. For legal and domain notices, please visit <a href="https://koalastuff.net/legal" target="_blank" rel="noreferrer">koalastuff.net/legal ↗</a>.</p>
+			<p>
+				KoalaGitHub is part of the open-source KoalaStuff project suite. For legal and domain
+				notices, please visit <a
+					href="https://koalastuff.net/legal"
+					target="_blank"
+					rel="noopener noreferrer">koalastuff.net/legal ↗</a
+				>.
+			</p>
 		</div>
 	</div>
 </div>
@@ -87,7 +133,8 @@
 		line-height: 1.6;
 	}
 
-	.features-list, .steps-list {
+	.features-list,
+	.steps-list {
 		display: flex;
 		flex-direction: column;
 		gap: 0.6rem;
@@ -95,7 +142,8 @@
 		color: var(--text-main);
 	}
 
-	.features-list li, .steps-list li {
+	.features-list li,
+	.steps-list li {
 		line-height: 1.5;
 	}
 
