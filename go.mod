@@ -1,6 +1,6 @@
 module github.com/Shik3i/KoalaGithub
 
-go 1.26.5
+go 1.26.9
 
 require modernc.org/sqlite v1.55.0
 
