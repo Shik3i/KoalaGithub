@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build,sharing=locked \
 	CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
 	go build -trimpath -ldflags="-s -w -X main.version=${APP_VERSION}" -o /out/koala-github .
 
-FROM alpine:3.24.1
+FROM alpine:3.24.2
 
 RUN apk add --no-cache ca-certificates su-exec tzdata \
 	&& addgroup -S -g 10001 koala \
