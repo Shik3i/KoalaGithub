@@ -3,10 +3,13 @@
 	import VisualizerCard from './VisualizerCard.svelte';
 	import type { Visualizer } from '$lib/types/visualizer.types';
 
-	let { visualizers, username } = $props<{
+	let {
+		visualizers,
+		username
+	}: {
 		visualizers: Visualizer[];
 		username: string;
-	}>();
+	} = $props();
 </script>
 
 <div class="grid-container">

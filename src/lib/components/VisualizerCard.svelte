@@ -13,10 +13,13 @@
 	import { renderTemplate } from '$lib/utils/markdown';
 	import { getOrCreateDeviceId } from '$lib/utils/device';
 
-	let { visualizer = $bindable(), username } = $props<{
+	let {
+		visualizer = $bindable(),
+		username
+	}: {
 		visualizer: Visualizer;
 		username: string;
-	}>();
+	} = $props();
 
 	let selectedTheme = $state('');
 	let previewImage = $state<HTMLImageElement>();

@@ -25,7 +25,7 @@
 		sortDirection = $bindable<SortDirection>('descending'),
 		totalCount = 0,
 		availableTags = [] as string[]
-	} = $props<{
+	}: {
 		selectedCategory?: VisualizerCategory | 'all';
 		searchQuery?: string;
 		selectedTag?: string | null;
@@ -34,7 +34,7 @@
 		sortDirection?: SortDirection;
 		totalCount?: number;
 		availableTags?: string[];
-	}>();
+	} = $props();
 
 	const CATEGORIES: { key: VisualizerCategory | 'all'; label: string; icon: Component }[] = [
 		{ key: 'all', label: 'All', icon: Sparkle },

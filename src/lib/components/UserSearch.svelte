@@ -4,10 +4,13 @@
 	import ArrowRight from 'phosphor-svelte/lib/ArrowRight';
 	import { DEFAULT_USERNAME, isValidGitHubUsername, sanitizeUsername } from '$lib/utils/username';
 
-	let { username = $bindable(DEFAULT_USERNAME), onUpdate = () => {} } = $props<{
+	let {
+		username = $bindable<string>(DEFAULT_USERNAME),
+		onUpdate = () => {}
+	}: {
 		username?: string;
 		onUpdate?: (val: string) => void;
-	}>();
+	} = $props();
 
 	let inputVal = $derived(username);
 	let errorMessage = $state<string | null>(null);
