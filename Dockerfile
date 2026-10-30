@@ -12,7 +12,7 @@ COPY src ./src
 COPY static ./static
 RUN npm run prepare && npm run build
 
-FROM --platform=$BUILDPLATFORM golang:1.27.2-alpine3.24 AS backend-builder
+FROM --platform=$BUILDPLATFORM golang:1.27.3-alpine3.24 AS backend-builder
 WORKDIR /app
 
 ARG TARGETOS
