@@ -2,6 +2,8 @@ module github.com/Shik3i/KoalaGithub
 
 go 1.26.10
 
+toolchain go1.26.11
+
 require modernc.org/sqlite v1.61.0
 
 require (
